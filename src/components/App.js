@@ -9,8 +9,7 @@ const App = () => (
 		<AddTodo />
 		<VisibleTodoList />
 		<Footer />
-		<br />
-		<AuthForm login = 'vasya' />
+		<AuthForm/>
 	</div>
 )
 
