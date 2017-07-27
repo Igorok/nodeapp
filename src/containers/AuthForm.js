@@ -9,13 +9,16 @@ class AuthForm extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {...this.props};
-		this.state.login = this.state.login || 'test';
-		this.state.password = this.state.password || 'test';
 	}
 	onsub (e) {
 		e.preventDefault();
-		console.log('submit ', e);
 
+		console.log(this.props);
+
+		this.props.dispatch(getAuth({
+			login: this.state.login,
+			password: this.state.password,
+		}));
 	}
 	changeField (e) {
 		e.preventDefault();
@@ -25,29 +28,26 @@ class AuthForm extends Component {
 		
 		let state = {};
 		state[e.target.dataset.name] = e.target.value;
-		this.setState(state, () => {
-			this.props.dispatch(getAuth({
-				login: this.state.login,
-				password: this.state.password,
-			}));
-		});		
+		this.setState(state);
 	}
 	render () {
 		return <div className='page'>
-			<form onSubmit={::this.onsub}>
+			<form onSubmit={::this.onsub} action="/fetch" method="post" >
 				<input
 					type='text'
+					name='login'
 					value={this.state.login}
 					onChange={::this.changeField}
-					placeholder='введите значение'
+					placeholder='Введите значение'
 					data-name = 'login'
 				/>
 				<br />
 				<input
 					type='password'
+					name='password'
 					value={this.state.password}
 					onChange={::this.changeField}
-					placeholder='введите значение'
+					placeholder='Введите значение'
 					data-name = 'password'
 				/>
 				<br />
@@ -62,20 +62,21 @@ class AuthForm extends Component {
 
 
 const mapStateToProps = (state) => {
+	console.log('mapStateToProps ', state);
 	return {
-		login: state.login,
-		password: state.password,
+		login: state.auth.login,
+		password: state.auth.password,
 	}
 }
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		onTodoClick: (id) => {
-			dispatch(toggleTodo(id))
+		getAuth: (id) => {
+			dispatch(getAuth(id))
 		}
 	}
 }
 
-AuthForm = connect()(AuthForm)
+AuthForm = connect(mapStateToProps)(AuthForm)
 
 export default AuthForm

@@ -1,5 +1,15 @@
+const initState = {
+	login: 'tester',
+	password: 'test',
+};
+
 const getAuth = (state, action) => {
-	console.log('state ', state, 'action ', action);
+	console.log(
+		'getAuth ',
+		'state ', state, 
+		'action ', action
+	);
+
 	return {
 		id: action.id,
 		login: action.login,
@@ -8,7 +18,7 @@ const getAuth = (state, action) => {
 }
 
 
-const auth = (state = {}, action) => {
+const auth = (state = initState, action) => {
 	switch (action.type) {
 		case 'ADD_FIELD':
 			return getAuth(state, action);
