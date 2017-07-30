@@ -18,6 +18,8 @@
     "express": "~4.15.2",
     "isomorphic-fetch": "^2.2.1",
     "lodash": "^4.17.4",
+    "moment": "^2.18.1",
+    "mongodb": "^2.2.30",
     "morgan": "~1.8.1",
     "prop-types": "^15.5.10",
     "pug": "~2.0.0-beta11",

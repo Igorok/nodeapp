@@ -1,16 +1,42 @@
-var express = require('express');
-var router = express.Router();
+let user = require(__dirname + '/../api/user.js');
+let express = require('express');
+let router = express.Router();
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-	res.render('index', { title: 'Express' });
-});
+let api = {};
 
-router.post('/fetch', (req, res, next) => {
-	console.log('req.body ', req.body);
+let init = () => {
+	return user.init()
+		.then((r) => {
+			api.user = r;
+		})
+		.then(() => {
+			router.get('/', function(req, res, next) {
+				console.log('get ');
+
+				res.render('index', { title: 'Express' });
+			});
+
+			router.post('/fetch', (req, res, next) => {
+				console.log('req.body ', req.body);
+				api.user.getUserList()
+					.then((r) => {
+						return res.json(r);
+					});
+			});
+		})
+		.then(() => {
+			console.log('api ', api);
+			return router;
+		})
+		.catch((e) => {
+			console.trace(e);
+		});
 
 	
-	res.json(req.body);
-});
 
-module.exports = router;
+
+
+};
+
+
+module.exports = init;
