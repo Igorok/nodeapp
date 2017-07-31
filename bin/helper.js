@@ -6,7 +6,8 @@ const MongoClient = require('mongodb').MongoClient;
 
 const cfgFile = 'config.js';
 let cfg = null,
-	db = null;
+	db = null
+	api = {};
 
 let getConfig = () => {
 	if (cfg) return Promise.resolve(cfg);
@@ -27,7 +28,7 @@ let getConfig = () => {
 				cfgArr.push(cfg);
 			})
 			.catch((e) => {
-				console.log(e);
+				criticalError(e);
 			});
 		}
 	});
@@ -36,7 +37,7 @@ let getConfig = () => {
 			cfg = _.merge.apply(null, cfgArr);
 			return cfg;
 		}).catch((e) => {
-			console.trace(e);
+			criticalError(e);
 		});
 };
 
@@ -56,12 +57,43 @@ let getMongo = () => {
 			});
 		})
 		.catch((e) => {
-			console.trace(e);
+			criticalError(e);
 		});;
 
 		
 		let url = `mongodb://${r.mongo.host}:${r.mongo.port}/${r.mongo.db}`;
 };
 
+let getApi = (arr) => {
+	arr = arr.map((name) => {
+		return () => {
+			if (api[name]) return Promise.resolve();
+
+			let apiPath = path.resolve(__dirname + '/../api/' + name + '.js');
+			let apiCode = require(apiPath);
+			return apiCode
+				.init()
+				.then((apiInitialized) => {
+					api[name] = apiInitialized;
+					return;
+				});
+		} 
+	});
+	return arr.reduce((p, f) => p.then(f), Promise.resolve())
+		.then(() => {
+			return api;
+		}).catch((e) => {
+			criticalError(e);
+		});
+}
+
+let criticalError = (e) => {
+	console.trace(e);
+	process.exit(1);
+}
+
+// exports
 module.exports.getConfig = getConfig;
 module.exports.getMongo = getMongo;
+module.exports.criticalError = criticalError;
+module.exports.getApi = getApi;

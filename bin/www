@@ -32,12 +32,7 @@ helper.getConfig()
 		db = _db;
 		return routeIndex();
 	})
-	.then((route) => {
-
-		console.log('route ', route);
-		
-
-		
+	.then((rIndex) => {
 
 		var app = express();
 
@@ -53,15 +48,15 @@ helper.getConfig()
 		app.use(cookieParser());
 		app.use(express.static(path.join(__dirname, '/../public')));
 
-		app.use('/', route);
+		app.use('/', rIndex);
 		// app.use('/users', users);
 
 		// catch 404 and forward to error handler
-		app.use(function(req, res, next) {
-			var err = new Error('Not Found');
-			err.status = 404;
-			next(err);
-		});
+		// app.use(function(req, res, next) {
+		// 	var err = new Error('Not Found');
+		// 	err.status = 404;
+		// 	next(err);
+		// });
 
 		// error handler
 		app.use(function(err, req, res, next) {

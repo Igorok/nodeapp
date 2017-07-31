@@ -6,6 +6,7 @@ export const getAuth = (opts) => {
 	return (dispatch) => {
 		let {login, password} = opts;
 		let data = {
+			fetch: 'user.getUserList',
 			type: 'ADD_FIELD',
 			id: uniqueId(),
 			login: login,
