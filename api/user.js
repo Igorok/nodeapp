@@ -6,7 +6,7 @@ let api = {};
 
 api.getUserList = () => {
 	return new Promise((resolve, reject) => {
-		db.collection('users').find({}, {login: 1, password: 1}).toArray((e, r) => {
+		db.collection('users').find({}, {login: 1, email: 1}).toArray((e, r) => {
 			if (e) return reject(e);
 
 			resolve(r)
