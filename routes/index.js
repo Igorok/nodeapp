@@ -39,6 +39,10 @@ let init = () => {
 				api[a][f](req.body)
 					.then((r) => {
 						return res.json(r);
+					})
+					.catch(e => {
+						console.trace('rout error', e);
+						return next(e);
 					});
 			});
 		})

@@ -12,7 +12,18 @@ api.getUserList = () => {
 			resolve(r)
 		});
 	});
-	
+};
+
+api.getAuth = (opts) => {
+	return new Promise((resolve, reject) => {
+		if (! opts.login) return reject('Wrong data');
+
+		db.collection('users').findOne({login: opts.login.trim()}, (e, r) => {
+			if (e) return reject(e);
+			if (! r) return reject(new Error('User not found'));
+			resolve(r)
+		});
+	});
 };
 
 let init = () => {
