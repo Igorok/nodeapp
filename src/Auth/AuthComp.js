@@ -5,6 +5,7 @@ import {push} from 'react-router-redux'
 import {api} from '../action'
 import {Alert} from '../component'
 
+
 class AuthComp extends React.Component {
 	componentDidMount() {
 		if (this.props.isAuthenticated) this.props.dispatch(push('/'));
@@ -19,10 +20,13 @@ class AuthComp extends React.Component {
 			password: e.target.elements.passwordInput.value,
 		}));
 	}
-	formSuccess () {
-		setTimeout(() => {
-			this.props.dispatch(push('/'));
-		}, 2000);
+
+	componentDidUpdate () {
+		if (this.props.status === 'success') {
+			setTimeout(() => {
+				this.props.dispatch(push('/'));
+			}, 2000);
+		}
 	}
 
 	render () {
@@ -45,7 +49,6 @@ class AuthComp extends React.Component {
 				className: 'success',
 				text: 'Loginned successfully',
 			}
-			this.formSuccess();
 		}
 
 		return <div className="row">
