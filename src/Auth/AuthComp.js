@@ -1,44 +1,51 @@
 import React from 'react'
-import { getAuth } from './AuthAct'
 import { connect } from 'react-redux'
 import {push} from 'react-router-redux'
 
+import {api} from '../action'
+import {Alert} from '../component'
 
 class AuthComp extends React.Component {
 	componentDidMount() {
-		if (this.props.auth.isAuthenticated) this.props.dispatch(push('/'));
+		if (this.props.isAuthenticated) this.props.dispatch(push('/'));
 	}
 	formSubmit (e) {
 		e.preventDefault();	
 
-		this.props.dispatch(getAuth({
+		this.props.dispatch(api({
+			type: 'AUTH',
+			fetch: 'user.getAuth',
 			login: e.target.elements.loginInput.value,
 			password: e.target.elements.passwordInput.value,
 		}));
 	}
+	formSuccess () {
+		setTimeout(() => {
+			this.props.dispatch(push('/'));
+		}, 2000);
+	}
 
 	render () {
-		let title = null,
-			disabled = null,
-			disabledAlert = null,
-			errorAlert = null
-			;
-		if (this.props.auth.status && this.props.auth.status === 'send') {
+		let disabled = null,
+			alertOpts = null;
+	
+		if (this.props.status === 'error') {
+			alertOpts = {
+				className: 'danger',
+				text: this.props.error || 'Error, wrong login or password'
+			}
+		} else if (this.props.status === 'send') {
 			disabled = 'disabled';
-			disabledAlert = <div className="alert alert-info" role="alert">
-				<strong>Loading!</strong> Please wait
-			</div>
-		}
-		if (this.props.auth.status && this.props.auth.status === 'error') {
-			errorAlert = <div className="alert alert-danger" role="alert">
-				<strong>Error!</strong> Wrong login or password
-			</div>
-		}
-		if (this.props.auth.login && this.props.auth.login.length) {
-			title = <h2>Login: {this.props.auth.login}<br />
-			Password: {this.props.auth.password}<br />
-			Email: {this.props.auth.email}
-			</h2>
+			alertOpts = {
+				className: 'info',
+				text: 'Loading, please wait',
+			}
+		} else if (this.props.status === 'success') {
+			alertOpts = {
+				className: 'success',
+				text: 'Loginned successfully',
+			}
+			this.formSuccess();
 		}
 
 		return <div className="row">
@@ -48,8 +55,7 @@ class AuthComp extends React.Component {
 						<h3 className="panel-title">Authentication</h3>
 					</div>
 					<div className="panel-body">
-						{disabledAlert}
-						{errorAlert}
+						<Alert opts={alertOpts} />
 
 						<form onSubmit={::this.formSubmit}>
 							<div className="form-group">
@@ -59,7 +65,7 @@ class AuthComp extends React.Component {
 									className="form-control" 
 									id="loginInput" 
 									placeholder="Login" 
-									defaultValue={this.props.auth.login}
+									defaultValue={this.props.login}
 									disabled={disabled}
 								/>
 							</div>
@@ -70,7 +76,7 @@ class AuthComp extends React.Component {
 									className="form-control" 
 									id="passwordInput" 
 									placeholder="Password" 
-									defaultValue={this.props.auth.password}
+									defaultValue={this.props.password}
 									disabled={disabled}
 								/>
 							</div>
@@ -80,10 +86,6 @@ class AuthComp extends React.Component {
 								disabled={disabled}
 							>Submit</button>
 						</form>
-
-
-						{title}
-
 					</div>
 				</div>
 			</div>
@@ -91,9 +93,7 @@ class AuthComp extends React.Component {
 	}
 }
 const mapStateToProps = (state) => {
-	return {
-		auth: state.auth,
-	}
+	return {...state.auth}
 }
 AuthComp = connect(mapStateToProps)(AuthComp)
 

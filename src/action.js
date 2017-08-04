@@ -1,11 +1,23 @@
 import {polyfill} from 'es6-promise';
 import fetch from 'isomorphic-fetch';
+import {push} from 'react-router-redux';
 
-
+/**
+ * http request to the web api
+ * @param {Object} opts 
+ * @param {String} opts.type - required, this is the type of action for reducer
+ * @param {String} opts.fetch - required, this is the name api and function for backend
+ */
 export const api = (opts) => {	
 	return (dispatch) => {
 		let type = opts.type;
 		delete opts.type;
+
+		let user = localStorage.getItem('user');
+		if (user) {
+			user = JSON.parse(user);
+			opts.token = user.token;
+		}
 
 		let param = {
 			method: 'POST', 
@@ -27,9 +39,14 @@ export const api = (opts) => {
 			})
 			.then((r) => {
 				r = {data: r, type: type + '_SUCCESS'}; 
-				dispatch(r);
+				return dispatch(r);
 			})
 			.catch((e) => {
+				if (e.message && e.message.toString() === '403') {
+					localStorage.removeItem('user');
+					return dispatch(push('/login'));
+				}
+
 				let ex = null;
 				if (e) {
 					ex = e.name + ' ' + e.message;
@@ -38,7 +55,7 @@ export const api = (opts) => {
 					type: type + '_ERROR',
 					error: ex || 'Oops, something wrong!',
 				}; 
-				dispatch(e);
+				return dispatch(e);
 			});
 	}
 	

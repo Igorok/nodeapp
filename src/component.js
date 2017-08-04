@@ -1,10 +1,13 @@
 import React from 'react'
 
 
+/**
+ * boostrap message
+ * @param {String} className - success, info, warning, danger
+ * @param {String} text - the text of the message
+ */
 export class Alert extends React.Component {
 	render () {
-		console.log('this.props ', this.props);
-
 		let tpl = null;
 		if (
 			this.props.opts && 
