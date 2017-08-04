@@ -1,23 +1,29 @@
 const initState = {
+	status: null,
+	error: null,
 	list: []
 };
 
-const getUserList = (state, action) => {
-	return {
-		type: action.type,
-		list: action.list,
-	}
-}
-
-
 const user = (state = initState, action) => {
 	switch (action.type) {
-		case 'GET_USER_LIST':
-			return getUserList(state, action);
-		// case 'TOGGLE_TODO':
-		//   return state.map(t =>
-		//     todo(t, action)
-		//   )
+		case 'USER_LIST_SEND':
+			return {
+				status: 'send',
+				error: null,
+				list: [],
+			};
+		case 'USER_LIST_SUCCESS':
+			return {
+				status: 'success',
+				error: null,
+				list: action.data,
+			};
+		case 'USER_LIST_ERROR':
+			return {
+				status: 'error',
+				error: action.error,
+				list: [],
+			};
 		default:
 			return state
 	}

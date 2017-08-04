@@ -54,8 +54,9 @@ ReactDOM.render(
 			<div>
 				<Route exact path="/" component={AuthCheck(About)}/>
 				<Route path="/login" component={Auth}/>
-				<Route path="/chat-list" component={ChatList}/>
-				<Route path="/user-list" component={UserList}/>
+				<Route exact path="/about" component={AuthCheck(About)}/>
+				<Route path="/chat-list" component={AuthCheck(ChatList)}/>
+				<Route path="/user-list" component={AuthCheck(UserList)}/>
 				
 			</div>
 		</ConnectedRouter>

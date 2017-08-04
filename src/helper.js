@@ -1,3 +1,31 @@
+import fetch from 'isomorphic-fetch';
+console.log('fetch ', fetch);
+
+export const api = (opts) => {
+	let param = {
+		method: 'POST', 
+		body: JSON.stringify(opts),
+		headers: {
+			'Accept': 'application/json',
+			'Content-Type': 'application/json'
+		}
+	};
+
+	return fetch('/fetch', param)
+		.then((r) => {
+			if (! r.status || r.status != 200) {
+				throw new Error(r.status);
+			}
+			return r.json();
+		})
+		.catch((e) => {
+			console.trace(e);
+		});
+};
+
+
+
+/*
 const _ = require('lodash');
 function mediator () {
 	let self = this;
@@ -23,3 +51,4 @@ function mediator () {
 module.exports = {
 	mediator: mediator,
 };
+*/

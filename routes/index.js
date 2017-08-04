@@ -36,6 +36,7 @@ let init = () => {
 				}				
 
 				console.log('req.body ', req.body);
+				delete req.body.fetch;
 				api[a][f](req.body)
 					.then((r) => {
 						return res.json(r);

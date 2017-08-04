@@ -1,27 +1,32 @@
 import {polyfill} from 'es6-promise';
 import fetch from 'isomorphic-fetch';
 
+import {api} from '../helper';
 
 export const getUserList = () => {
 	return (dispatch) => {
 
 		dispatch({
-			type: 'GET_USER_LIST',
+			type: 'USER_LIST',
 			state: 'send',
 			list: [],
 		});
 
-		let param = {
-			method: 'POST', 
-			body: JSON.stringify({
-				fetch: 'user.getUserList'
-			}),
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			}
-		};
+		api({fetch: 'user.getUserList'})
+			.then((r) => {
+				console.log('comp r ', r);
 
+				return dispatch({
+					type: 'USER_LIST',
+					state: 'success',
+					list: r,
+				});
+			})
+			.catch((e) => {
+				console.log('comp e ', e);
+			})
+
+		/*
 		fetch('/fetch', param)
 			.then((r) => {
 				console.log('r ', r);
@@ -44,6 +49,7 @@ export const getUserList = () => {
 					list: [],
 				});
 			});
+		*/
 	}
 }
 

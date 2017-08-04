@@ -2,6 +2,8 @@ import React from 'react'
 import { getUserList } from '../../actions/user'
 import { connect } from 'react-redux'
 
+import {api} from  '../../action'
+import {Alert} from '../../component'
 
 
 class Item extends React.Component {
@@ -20,23 +22,42 @@ class List extends React.Component {
 		console.log('list');
 	}
 	componentWillMount() {
-		this.props.dispatch(getUserList({}));
+		this.props.dispatch(api({
+			type: 'USER_LIST',
+			fetch: 'user.getUserList',
+		}));
+		
 	}
 	render () {
-		console.log('list render');
+		let list = null,
+			alertOpts = null;
+		if (this.props.status === 'error') {
+			alertOpts = {
+				className: 'danger',
+				text: this.props.error,
+			}
+		} else if (this.props.status === 'send') {
+			alertOpts = {
+				className: 'info',
+				text: 'Loading, please wait!',
+			}
+		}
+
+		if (this.props.list && this.props.list.length) {
+			list = this.props.list.map((u) => {
+				return <Item user={u} key={u._id} />
+			});
+		}
 
 		return <div>
+			<Alert opts={alertOpts} />
 			The list of users
-			 {this.props.list.map((u) => {
-				return <Item user={u} key={u._id} />
-			})} 
+			{list}
 		</div>
 	}
 }
 const mapStateToProps = (state) => {
-	return {
-		list: state.user.list,
-	}
+	return {...state.user}
 }
 List = connect(mapStateToProps)(List)
 
