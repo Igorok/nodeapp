@@ -1,4 +1,6 @@
 import React from 'react'
+import { connect } from 'react-redux'
+import { push } from 'react-router-redux'
 
 
 /**
@@ -22,3 +24,80 @@ export class Alert extends React.Component {
 		return tpl;
 	}
 }
+
+export class SideNav extends React.Component {
+	render () {
+		console.log('SideNav this.props ', this.props);
+		
+		let userItem = null;
+		let chatItem = null;
+
+		if (this.props.isAuthenticated) {
+			userItem = <li role="presentation">
+				<a href="/user-list"><span className="glyphicon glyphicon-user"></span>&nbsp;&nbsp;Users</a>
+			</li>
+			chatItem = <li role="presentation">
+				<a href="/chat-list"><span className="glyphicon glyphicon-envelope"></span>&nbsp;&nbsp;Chats</a>
+			</li>
+		}		
+
+		return <ul className="nav nav-pills nav-stacked">
+			<li role="presentation">
+				<a href="/"><span className="glyphicon glyphicon-home"></span>&nbsp;&nbsp;Blogs</a>
+			</li>
+			{userItem}
+			{chatItem}
+			<li role="presentation">
+				<a href="/about"><span className="glyphicon glyphicon-exclamation-sign"></span>&nbsp;&nbsp;About</a>
+			</li>
+		</ul>
+	}
+}
+
+/**
+ * function to render layout
+ * @param {Class} Component - React.Component that need to render 
+ * @param {*} forAuthenticated - this component only for authenticated users
+ */
+export function layout (Component, forAuthenticated = false) {
+	class Layout extends React.Component {
+		componentWillMount() {
+			this.checkAuth(this.props.auth)
+		}
+		componentWillReceiveProps(nextProps) {
+			this.checkAuth(nextProps.auth)
+		}
+		checkAuth(auth) {
+			// if this page only for authenticated users and the storage has no isAuthenticated
+			if (forAuthenticated && ! auth.isAuthenticated) {
+				this.props.dispatch(push('/login'));
+			}
+		}
+		render() {
+			let isAuthenticated = this.props.auth.isAuthenticated;
+			return (
+				<div>
+					<div className="row">
+						<div className="col-md-2">
+							<SideNav isAuthenticated={isAuthenticated}/>
+						</div>
+						<div className="col-md-10">
+							<Component />
+						</div>
+					</div>
+				</div>
+			)
+		}
+	}
+
+	function mapStateToProps(state) {
+		return {
+			auth: state.auth
+		}
+	}
+
+	return connect(mapStateToProps)(Layout)
+}
+
+
+

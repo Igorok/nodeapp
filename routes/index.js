@@ -5,7 +5,7 @@ let router = express.Router();
 let api = {};
 
 let init = () => {
-	return helper.getApi(['user', 'chat'])
+	return helper.getApi(['user', 'chat', 'blog'])
 		.then((r) => {
 			api = r;
 		})
@@ -33,9 +33,8 @@ let init = () => {
 					! api[a][f]
 				) {
 					return res.status(404).send('Api not found');
-				}				
+				}
 
-				console.log('req.body ', req.body);
 				delete req.body.fetch;
 				api[a][f](req.body)
 					.then((r) => {

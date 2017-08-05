@@ -1,8 +1,6 @@
 import React from 'react';
 import 'jquery';
 import 'bootstrap/dist/js/bootstrap';
-import 'bootstrap/dist/css/bootstrap.css';
-import '../styles/index.scss'
 
 
 

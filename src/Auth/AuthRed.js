@@ -25,7 +25,7 @@ const success = (state, action) => {
 }
 
 
-const login = (state = initState, action) => {
+const auth = (state = initState, action) => {
 	switch (action.type) {
 		case 'AUTH_SEND':
 			return {
@@ -43,5 +43,5 @@ const login = (state = initState, action) => {
 	}
 }
 
-export default login
+export default auth
 

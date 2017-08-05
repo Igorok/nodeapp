@@ -13,14 +13,24 @@ import thunk from 'redux-thunk'
 import redTodos from './reducers/todos'
 import redVisibilityFilter from './reducers/visibilityFilter'
 import redUser from './reducers/user'
-import redAuth from './Auth/AuthRed'
+
+import auth from './Auth/AuthRed'
+import blogList from './Blog/ListRed'
 
 // components
-import Auth from './Auth/AuthComp'
-import AuthCheck from './Auth/AuthCheckComp'
+import AuthComp from './Auth/AuthComp'
+import BlogListComp from './Blog/ListComp'
+
+
 import About from './components/About'
 import ChatList from './components/ChatList'
 import UserList from './components/User/List'
+
+import {layout} from './component'
+
+
+import 'bootstrap/dist/css/bootstrap.css';
+import './styles/index.scss'
 
 // import {redirect} from './middlewares/redirect'
 
@@ -33,8 +43,10 @@ let store = createStore(
 		todos: redTodos,
 		visibilityFilter: redVisibilityFilter,
 		user: redUser,
+
 		router: routerReducer,
-		auth: redAuth,
+		auth: auth,
+		blogList: blogList,
 	}),
 	compose(
 		applyMiddleware(thunk),
@@ -52,11 +64,12 @@ ReactDOM.render(
 	<Provider store={store}>
 		<ConnectedRouter history={history}>
 			<div>
-				<Route exact path="/" component={AuthCheck(About)}/>
-				<Route path="/login" component={Auth}/>
-				<Route exact path="/about" component={AuthCheck(About)}/>
-				<Route path="/chat-list" component={AuthCheck(ChatList)}/>
-				<Route path="/user-list" component={AuthCheck(UserList)}/>
+				<Route exact path="/" component={layout(BlogListComp)} />
+				<Route path="/login" component={AuthComp} />
+				<Route exact path="/about" component={layout(About)} />
+
+				<Route path="/chat-list" component={layout(ChatList, true)} />
+				<Route path="/user-list" component={layout(UserList, true)} />
 				
 			</div>
 		</ConnectedRouter>

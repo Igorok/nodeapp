@@ -5,10 +5,10 @@ const moment = require('moment');
 
 let cfg = null,
 	db = null,
-	api = {};
+	apiUser = {};
 
-api.getUserList = (opts) => {
-	return api.checkAuth(opts)
+apiUser.getUserList = (opts) => {
+	return apiUser.checkAuth(opts)
 		.then((user) => {
 			return new Promise((resolve, reject) => {
 				db.collection('users').find({status: 1}, {login: 1, email: 1}).toArray((e, r) => {
@@ -20,7 +20,7 @@ api.getUserList = (opts) => {
 		});
 };
 
-api.getAuth = (opts) => {
+apiUser.getAuth = (opts) => {
 	if (! opts.login || ! opts.password) {
 		return Promise.reject('Wrong data');
 	}
@@ -87,9 +87,9 @@ api.getAuth = (opts) => {
 	});
 };
 
-api.checkAuth = (opts) => {
+apiUser.checkAuth = (opts) => {
 	if (! opts.token) {
-		return Promise.reject('Wrong data');
+		return Promise.reject(403);
 	}
 	let user = null,
 		device = opts.dev ? opts.dev.toString() : 'web';
@@ -149,7 +149,7 @@ let init = () => {
 		})
 		.then((r) => {
 			db = r;
-			return api;
+			return apiUser;
 		})
 }
 
