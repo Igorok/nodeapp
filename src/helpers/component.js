@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { push } from 'react-router-redux'
+// import { push } from 'react-router-redux'
 
 
 /**
@@ -26,13 +26,15 @@ export class Alert extends React.Component {
 }
 
 export class SideNav extends React.Component {
-	render () {
-		console.log('SideNav this.props ', this.props);
-		
+	render () {		
+		let profileItem = null;
 		let userItem = null;
 		let chatItem = null;
 
 		if (this.props.isAuthenticated) {
+			profileItem = <li role="presentation">
+				<a href="/profile"><span className="glyphicon glyphicon-home"></span>&nbsp;&nbsp;Profile</a>
+			</li>
 			userItem = <li role="presentation">
 				<a href="/user-list"><span className="glyphicon glyphicon-user"></span>&nbsp;&nbsp;Users</a>
 			</li>
@@ -42,14 +44,16 @@ export class SideNav extends React.Component {
 		}		
 
 		return <ul className="nav nav-pills nav-stacked">
+			{profileItem}
 			<li role="presentation">
-				<a href="/"><span className="glyphicon glyphicon-home"></span>&nbsp;&nbsp;Blogs</a>
+				<a href="/"><span className="glyphicon glyphicon-exclamation-sign"></span>&nbsp;&nbsp;About</a>
+			</li>
+			<li role="presentation">
+				<a href="/blog-list"><span className="glyphicon glyphicon-bookmark"></span>&nbsp;&nbsp;Blogs</a>
 			</li>
 			{userItem}
 			{chatItem}
-			<li role="presentation">
-				<a href="/about"><span className="glyphicon glyphicon-exclamation-sign"></span>&nbsp;&nbsp;About</a>
-			</li>
+			
 		</ul>
 	}
 }
@@ -70,7 +74,7 @@ export function layout (Component, forAuthenticated = false) {
 		checkAuth(auth) {
 			// if this page only for authenticated users and the storage has no isAuthenticated
 			if (forAuthenticated && ! auth.isAuthenticated) {
-				this.props.dispatch(push('/login'));
+				// this.props.dispatch(push('/login'));
 			}
 		}
 		render() {

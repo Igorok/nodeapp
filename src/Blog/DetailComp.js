@@ -1,0 +1,84 @@
+import React from 'react'
+import { connect } from 'react-redux'
+
+
+import {api} from '../helpers/action'
+import {Alert} from '../helpers/component'
+
+import createHistory from 'history/createBrowserHistory'
+let history1 = createHistory();
+console.log('history1 ', history1);
+
+
+
+class BlogListItem extends React.Component {
+	render () {
+		return <div className="col-md-4">
+			<div className="panel panel-default">
+				<div className="panel-heading">
+					<h3 className="panel-title">{this.props.item.name}</h3>
+				</div>
+				<div className="panel-body">
+					<p>
+						{this.props.item.description}
+					</p>
+					<p>
+						Created: {this.props.item.created}
+						<br />
+						Author: {this.props.item.user}
+					</p>
+				</div>
+			</div>
+		</div>
+	}
+}
+
+class BlogDetailComp extends React.Component {
+	componentWillMount () {
+		// this.props.dispatch(api({
+		// 	type: 'BLOG_LIST',
+		// 	fetch: 'blog.getBlogList',
+		// }));
+	}
+
+	render () {
+		console.log('BlogDetailComp ', this.props, this.props.params);
+
+		let alertOpts = null,
+			blogs = null;
+	
+		if (this.props.status === 'error') {
+			alertOpts = {
+				className: 'danger',
+				text: this.props.error
+			}
+		} else if (this.props.status === 'send') {
+			alertOpts = {
+				className: 'info',
+				text: 'Loading, please wait',
+			}
+		}
+
+		// if (this.props.status === 'success' && this.props.list.length) {
+		// 	blogs = this.props.list.map((val) => {
+		// 		return <BlogListItem item={val} key={val._id} />
+		// 	});
+		// }
+
+		// col-md-4
+		return <div>
+			<Alert opts={alertOpts} />
+
+			blogDetail
+
+			<div className="row">{blogs}</div>
+		</div>
+		
+	}
+}
+const mapStateToProps = (state) => {
+	return {...state}
+}
+BlogDetailComp = connect(mapStateToProps)(BlogDetailComp)
+
+export default BlogDetailComp

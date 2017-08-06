@@ -1,21 +1,17 @@
-const initState = {
+let initState = {
+	list: [],
 	status: null,
-	error: null,
-	list: []
 };
-
-const user = (state = initState, action) => {
+const userList = (state = initState, action) => {
 	switch (action.type) {
 		case 'USER_LIST_SEND':
 			return {
 				status: 'send',
-				error: null,
-				list: [],
+				list: state.list,
 			};
 		case 'USER_LIST_SUCCESS':
 			return {
 				status: 'success',
-				error: null,
 				list: action.data,
 			};
 		case 'USER_LIST_ERROR':
@@ -29,4 +25,4 @@ const user = (state = initState, action) => {
 	}
 }
 
-export default user
+export default userList

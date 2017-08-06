@@ -1,14 +1,14 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import {push} from 'react-router-redux'
+// import {push} from 'react-router-redux'
 
-import {api} from '../action'
-import {Alert} from '../component'
+import {api} from '../helpers/action'
+import {Alert} from '../helpers/component'
 
 
 class AuthComp extends React.Component {
 	componentDidMount() {
-		if (this.props.isAuthenticated) this.props.dispatch(push('/'));
+		if (this.props.isAuthenticated) return window.location = '/';
 	}
 	formSubmit (e) {
 		e.preventDefault();	
@@ -24,7 +24,7 @@ class AuthComp extends React.Component {
 	componentDidUpdate () {
 		if (this.props.status === 'success') {
 			setTimeout(() => {
-				this.props.dispatch(push('/'));
+				return window.location = '/';
 			}, 2000);
 		}
 	}

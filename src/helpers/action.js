@@ -1,6 +1,6 @@
 import {polyfill} from 'es6-promise';
 import fetch from 'isomorphic-fetch';
-import {push} from 'react-router-redux';
+// import {push} from 'react-router-redux';
 
 /**
  * http request to the web api
@@ -44,7 +44,7 @@ export const api = (opts) => {
 			.catch((e) => {
 				if (e.message && e.message.toString() === '403') {
 					localStorage.removeItem('user');
-					return dispatch(push('/login'));
+					return window.location = '/login'
 				}
 
 				let ex = null;

@@ -10,9 +10,24 @@ let init = () => {
 			api = r;
 		})
 		.then(() => {
-			router.get('*', function(req, res, next) {
-				console.log('/');
-				res.render('index', { title: 'Express' });
+			router.get('/', function(req, res, next) {
+				res.render('about', { title: 'Express'});
+			});
+			router.get('/login', function(req, res, next) {
+				res.render('login', { title: 'Express'});
+			});
+			router.get('/profile', function(req, res, next) {
+				res.render('profile', { title: 'Express'});
+			});
+			router.get('/blog-list', function(req, res, next) {
+				res.render('blog_list', { title: 'Express'});
+			});
+			router.get('/blog-detail/:blogId', function(req, res, next) {
+				res.render('blog_detail', { title: 'Express' , blogId: req.params.id});
+			});
+
+			router.get('/user-list', function(req, res, next) {
+				res.render('user_list', { title: 'Express'});
 			});
 
 			router.post('/fetch', (req, res, next) => {

@@ -9,9 +9,10 @@ import 'bootstrap/dist/css/bootstrap.css';
 import './styles/index.scss'
 
 import {layout} from './helpers/component'
-import BlogListComp from './Blog/ListComp'
-
 import auth from './Auth/AuthRed'
+
+// custom part
+import BlogListComp from './Blog/ListComp'
 import blogList from './Blog/ListRed'
 
 let store = createStore(
@@ -23,7 +24,6 @@ let store = createStore(
 		applyMiddleware(thunk),
 		applyMiddleware(createLogger()),
 	)
-	
 );
 
 let Comp = layout(BlogListComp);

@@ -20,6 +20,15 @@ apiUser.getUserList = (opts) => {
 		});
 };
 
+apiUser.getCurrentProfile = (opts) => {
+	return apiUser.checkAuth(opts)
+		.then((user) => {
+			delete user.password;
+			delete user.tokens;
+			return user;
+		});
+};
+
 apiUser.getAuth = (opts) => {
 	if (! opts.login || ! opts.password) {
 		return Promise.reject('Wrong data');
