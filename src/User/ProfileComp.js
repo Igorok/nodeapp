@@ -15,7 +15,7 @@ class Info extends React.Component {
 						<a href="#">My blogs</a>
 					</div>
 					<div className="panel-body">
-						0
+						{this.props.profile.countBlogs}
 					</div>
 				</div>
 			</div>
@@ -41,10 +41,10 @@ class Info extends React.Component {
 				<div className="panel panel-default">
 					<div className="panel-heading">
 						<span className="glyphicon glyphicon-envelope"></span>&nbsp;&nbsp;
-						<a href="/chat-list">My chat groups</a>
+						<a href="/chat-list">My chats</a>
 					</div>
 					<div className="panel-body">
-						0
+						{this.props.profile.countChats}
 					</div>
 				</div>
 			</div>
@@ -62,12 +62,13 @@ class Form extends React.Component {
 	}
 
 	formSubmit (e) {
-		e.preventDefault();	
-		let data = {
-			login: e.target.elements.login.value,
-			email: e.target.elements.email.value,
-		};
-		console.log('data ', data);
+		e.preventDefault();
+		this.props.dispatch(api({
+			type: 'EDIT_PROFILE',
+			fetch: 'user.editCurrentProfile',
+			login: this.state.login,
+			email: this.state.email,
+		}));
 	}
 
 	fieldChange (e) {
@@ -126,19 +127,36 @@ class ProfileComp extends React.Component {
 			fetch: 'user.getCurrentProfile',
 		}));
 	}
+	componentWillReceiveProps (newProps) {
+		if (newProps.profile.status === 'edit_success') {
+			newProps.dispatch(api({
+				type: 'GET_PROFILE',
+				fetch: 'user.getCurrentProfile',
+			}));
+		}
+	}
 
 	render () {
 		let alertOpts = null;
-	
-		if (this.props.profile.status === 'error') {
+		if (
+			this.props.profile.status === 'error' ||
+			this.props.profile.status === 'edit_error'
+		) {
 			alertOpts = {
 				className: 'danger',
-				text: this.props.profile.error
+				text: this.props.profile.error || this.props.profile.error
 			}
 		} else if (this.props.profile.status === 'send') {
 			alertOpts = {
 				className: 'info',
 				text: 'Loading, please wait',
+			}
+		} else if (
+			this.props.profile.status === 'edit_success'
+		) {
+			alertOpts = {
+				className: 'success',
+				text: 'The profile updated successfully',
 			}
 		}
 		

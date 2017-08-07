@@ -21,13 +21,95 @@ apiUser.getUserList = (opts) => {
 };
 
 apiUser.getCurrentProfile = (opts) => {
+	let user = null;
+	
 	return apiUser.checkAuth(opts)
-		.then((user) => {
+		.then((u) => {
+			user = u;
+
+			let getCountChats = new Promise((resolve, reject) => {
+				db.collection('chatgroups').count({'users._id': user._id}, (e, r) => {
+					if (e) return reject(e);
+					user.countChats = r;
+					resolve()
+				});
+			});
+			let getCountBlogs = new Promise((resolve, reject) => {
+				db.collection('blogs').count({uId: user._id}, (e, r) => {
+					if (e) return reject(e);
+					user.countBlogs = r;
+					resolve()
+				});
+			});
+
+			return Promise.all([getCountChats, getCountBlogs]);
+		})
+		.then(() => {
 			delete user.password;
 			delete user.tokens;
 			return user;
 		});
 };
+
+
+apiUser.editCurrentProfile = (opts) => {
+	let user = null;
+	
+	if (! opts.login || ! opts.email) {
+		return Promise.reject('Login and email are required');
+	}
+
+	opts.login = opts.login.toString().trim();
+	opts.email = opts.email.toString().trim();
+
+
+	return apiUser.checkAuth(opts)
+		.then((u) => {
+			user = u;
+
+			if (
+				opts.login === user.login &&
+				opts.email === user.email
+			) {
+				return Promise.reject('Nothing to edit');
+			}
+
+			let q = {
+				_id : {
+					$ne: user._id,
+				},
+				$or: [
+					{email: opts.email},
+					{login: opts.login},
+				]
+			};
+
+			return new Promise((resolve, reject) => {
+				db.collection('users').count(q, (e, r) => {
+					if (e) return reject(e);
+					if (r) return reject('The login or the email already exists');
+					
+					resolve()
+				});
+			});
+		})
+		.then(() => {
+			return new Promise((resolve, reject) => {
+				let q = {_id: user._id};
+				let set = {$set: {
+					login: opts.login,
+					email: opts.email,
+				}};
+				db.collection('users').update({_id: user._id}, set, (e, r) => {
+					if (e) return reject(e);
+					
+					resolve()
+				});
+			});
+		});
+};
+
+
 
 apiUser.getAuth = (opts) => {
 	if (! opts.login || ! opts.password) {

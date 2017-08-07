@@ -53,14 +53,14 @@ let init = () => {
 				delete req.body.fetch;
 				api[a][f](req.body)
 					.then((r) => {
-						return res.json(r);
+						return res.json(r || null);
 					})
 					.catch(e => {
 						let status = 500;
 						if (e === 403) status = 403;
 						console.trace('rout error', e);
 
-						 res.status(status).send(e);
+						 res.status(status).json(e);
 					});
 			});
 		})

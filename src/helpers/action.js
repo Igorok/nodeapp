@@ -27,19 +27,27 @@ export const api = (opts) => {
 				'Content-Type': 'application/json'
 			}
 		};
-		dispatch({
-			type: type + '_SEND'
-		});
+		
+		let sendOpts = {...opts};
+		sendOpts.type = type + '_SEND';
+		dispatch(sendOpts);
+
+
+		let status = null;
 		return fetch('/fetch', param)
 			.then((r) => {
-				if (! r.status || r.status != 200) {
-					throw new Error(r.status);
-				}
+				status = r.status;
 				return r.json();
 			})
 			.then((r) => {
-				r = {data: r, type: type + '_SUCCESS'}; 
-				return dispatch(r);
+				if (status == 403) {
+					throw new Error(status);
+				} else if (status != 200) {
+					throw new Error(r);
+				} else {
+					r = {data: r, type: type + '_SUCCESS'}; 
+					return dispatch(r);
+				}
 			})
 			.catch((e) => {
 				if (e.message && e.message.toString() === '403') {
@@ -47,13 +55,9 @@ export const api = (opts) => {
 					return window.location = '/login'
 				}
 
-				let ex = null;
-				if (e) {
-					ex = e.name + ' ' + e.message;
-				}
 				e = {
 					type: type + '_ERROR',
-					error: ex || 'Oops, something wrong!',
+					error: e.message || 'Oops, something wrong!',
 				}; 
 				return dispatch(e);
 			});
