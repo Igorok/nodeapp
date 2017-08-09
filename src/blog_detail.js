@@ -12,13 +12,15 @@ import {layout} from './helpers/component'
 import auth from './Auth/AuthRed'
 
 // custom part
-import BlogListComp from './Blog/ListComp'
-import blogList from './Blog/ListRed'
+import BlogDetailComp from './Blog/DetailComp'
+import blogDetail from './Blog/DetailRed'
+import postList from './Blog/PostListRed'
 
 let store = createStore(
 	combineReducers({
 		auth: auth,
-		blogList: blogList,
+		blogDetail: blogDetail,
+		postList: postList,
 	}),
 	compose(
 		applyMiddleware(thunk),
@@ -26,7 +28,7 @@ let store = createStore(
 	)
 );
 
-let Comp = layout(BlogListComp);
+let Comp = layout(BlogDetailComp);
 render(
 	<Provider store={store}>
 		<Comp />

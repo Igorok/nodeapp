@@ -5,14 +5,11 @@ import {Alert} from '../helpers/component'
 
 class BlogListItem extends React.Component {
 	render () {
-		console.log('this.props ', this.props);
-
-
-
 		return <div className="col-md-4">
 			<div className="panel panel-default">
 				<div className="panel-heading">
 					<h3 className="panel-title">
+						<span className='glyphicon glyphicon-bookmark'></span>&nbsp;&nbsp;
 						<a href = {"/blog-detail/" + this.props.item._id}>
 							{this.props.item.name}
 						</a>
@@ -23,9 +20,12 @@ class BlogListItem extends React.Component {
 						{this.props.item.description}
 					</p>
 					<p>
-						Created: {this.props.item.created}
-						<br />
+						<span className='glyphicon glyphicon-user'></span>&nbsp;&nbsp;
 						Author: {this.props.item.user}
+						<br />
+						<span className='glyphicon glyphicon-time'></span>&nbsp;&nbsp;
+						Created: {this.props.item.created}
+						
 					</p>
 				</div>
 			</div>

@@ -11,23 +11,47 @@ let init = () => {
 		})
 		.then(() => {
 			router.get('/', function(req, res, next) {
-				res.render('about', { title: 'Express'});
+				let opts = {
+					javascript: ['about'],
+					title: 'Express'
+				};
+				res.render('simple_view', opts);
 			});
 			router.get('/login', function(req, res, next) {
-				res.render('login', { title: 'Express'});
+				let opts = {
+					javascript: ['login'],
+					title: 'Express'
+				};
+				res.render('simple_view', opts);
 			});
 			router.get('/profile', function(req, res, next) {
-				res.render('profile', { title: 'Express'});
+				let opts = {
+					javascript: ['profile'],
+					title: 'Express'
+				};
+				res.render('simple_view', opts);
 			});
 			router.get('/blog-list', function(req, res, next) {
-				res.render('blog_list', { title: 'Express'});
+				let opts = {
+					javascript: ['blog_list'],
+					title: 'Express'
+				};
+				res.render('simple_view', opts);
 			});
 			router.get('/blog-detail/:blogId', function(req, res, next) {
-				res.render('blog_detail', { title: 'Express' , blogId: req.params.id});
+				let opts = {
+					javascript: ['blog_detail'],
+					variables: {blogId: req.params.blogId ? req.params.blogId.toString() : null},
+					title: 'Express Blog'
+				};
+				res.render('simple_view', opts);
 			});
-
 			router.get('/user-list', function(req, res, next) {
-				res.render('user_list', { title: 'Express'});
+				let opts = {
+					javascript: ['user_list'],
+					title: 'Express'
+				};
+				res.render('simple_view', opts);
 			});
 
 			router.post('/fetch', (req, res, next) => {

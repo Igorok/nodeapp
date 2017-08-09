@@ -2,7 +2,8 @@ const moment = require('moment');
 const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
-const MongoClient = require('mongodb').MongoClient;
+const mongodb = require('mongodb');
+
 
 const cfgFile = 'config.js';
 let cfg = null,
@@ -48,9 +49,10 @@ let getMongo = () => {
 		.then((r) => {
 			return new Promise((resolve, reject) => {
 				let url = `mongodb://${r.mongo.host}:${r.mongo.port}/${r.mongo.db}`;
-				MongoClient.connect(url, (e, _db) => {
+				mongodb.MongoClient.connect(url, (e, _db) => {
 					if (e) return reject(e);
-					
+					console.log('mongo connected ', url);
+
 					db = _db;
 					resolve(db);
 				});
@@ -58,10 +60,7 @@ let getMongo = () => {
 		})
 		.catch((e) => {
 			criticalError(e);
-		});;
-
-		
-		let url = `mongodb://${r.mongo.host}:${r.mongo.port}/${r.mongo.db}`;
+		});
 };
 
 let getApi = (arr) => {
@@ -92,8 +91,19 @@ let criticalError = (e) => {
 	process.exit(1);
 }
 
+
+let mongoId = (_id) => {
+	if (! _id) return null;	
+	return mongodb.ObjectID(_id);
+}
+let newMongoId = () => {
+	return new mongodb.ObjectID();
+}
+
 // exports
 module.exports.getConfig = getConfig;
 module.exports.getMongo = getMongo;
 module.exports.criticalError = criticalError;
 module.exports.getApi = getApi;
+module.exports.mongoId = mongoId;
+module.exports.newMongoId = newMongoId;

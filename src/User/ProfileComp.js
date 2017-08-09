@@ -151,23 +151,18 @@ class ProfileComp extends React.Component {
 				className: 'info',
 				text: 'Loading, please wait',
 			}
-		} else if (
-			this.props.profile.status === 'edit_success'
-		) {
+		} else if (this.props.profile.status === 'edit_success') {
 			alertOpts = {
 				className: 'success',
 				text: 'The profile updated successfully',
 			}
 		}
 		
-
-		// col-md-4
 		return <div>
 			<Alert opts={alertOpts} />
 			<Form profile={this.props.profile} dispatch={this.props.dispatch} />
 			<Info profile={this.props.profile} />
 		</div>
-		
 	}
 }
 const mapStateToProps = (state) => {
