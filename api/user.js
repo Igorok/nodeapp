@@ -56,7 +56,7 @@ apiUser.editCurrentProfile = (opts) => {
 	let user = null;
 	
 	if (! opts.login || ! opts.email) {
-		return Promise.reject('Login and email are required');
+		return Promise.reject(new Error('Login and email are required'));
 	}
 
 	opts.login = opts.login.toString().trim();
@@ -71,7 +71,7 @@ apiUser.editCurrentProfile = (opts) => {
 				opts.login === user.login &&
 				opts.email === user.email
 			) {
-				return Promise.reject('Nothing to edit');
+				return Promise.reject(new Error('Nothing to edit'));
 			}
 
 			let q = {
@@ -87,7 +87,7 @@ apiUser.editCurrentProfile = (opts) => {
 			return new Promise((resolve, reject) => {
 				db.collection('users').count(q, (e, r) => {
 					if (e) return reject(e);
-					if (r) return reject('The login or the email already exists');
+					if (r) return reject(new Error('The login or the email already exists'));
 					
 					resolve()
 				});
@@ -113,7 +113,7 @@ apiUser.editCurrentProfile = (opts) => {
 
 apiUser.getAuth = (opts) => {
 	if (! opts.login || ! opts.password) {
-		return Promise.reject('Wrong data');
+		return Promise.reject(new Error('Wrong data'));
 	}
 	let user = null;
 	let hash = crypto.createHash('sha1');

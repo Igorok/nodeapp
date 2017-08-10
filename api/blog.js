@@ -56,14 +56,14 @@ apiBlog.getBlogList = (opts) => {
 apiBlog.getBlogDetail = (opts) => {
 	let blog = null;
 	if (! opts._id) {
-		return Promise.reject('The blog not found');
+		return Promise.reject(new Error('The blog not found'));
 	}
 	opts._id = helper.mongoId(opts._id.toString());
 
 	return new Promise((resolve, reject) => {
 		db.collection('blogs').findOne({_id: opts._id}, (e, r) => {
 			if (e) return reject(e);
-			if (! r) return reject('The blog not found');
+			if (! r) return reject(new Error('The blog not found'));
 			blog = r;
 			resolve();
 		});
@@ -89,7 +89,7 @@ apiBlog.getBlogPosts = (opts) => {
 	let posts = [],
 		users = [];
 	if (! opts._id) {
-		return Promise.reject('The blog not found');
+		return Promise.reject(new Error('The blog not found'));
 	}
 	opts._id = helper.mongoId(opts._id.toString());
 
@@ -143,7 +143,71 @@ apiBlog.getBlogPosts = (opts) => {
 		});
 		return posts;
 	});
+};
+
+apiBlog.getPostDetail = (opts) => {
+	let post = null;
+	if (! opts._id) {
+		return Promise.reject(new Error('The blog not found'));
+	}
+	opts._id = helper.mongoId(opts._id.toString());
+
+	return new Promise((resolve, reject) => {
+		let q = {
+			_id: opts._id,
+			approved: 1,
+			status: 'publish',
+		};
+
+		db.collection('posts').findOne(q, (e, r) => {
+			if (e) return reject(e);
+			if (! r) return reject(new Error('The blog not found'));
+			post = r;
+			resolve();
+		});
+	})
+	.then(() => {
+		return new Promise((resolve, reject) => {
+			db.collection('users').findOne({_id: post.uId}, {login: 1}, (e, r) => {
+				if (e) return reject(e);
+				post.user = r ?  r.login : 'unknown';
+				post.created = moment(post.created).format('YYYY-MM-DD HH:mm');
+
+				delete post.uId;
+				delete post.public;
+				delete post.approved;
+				resolve();
+			});
+		});
+	})
+	.then(() => {
+		return post;
+	});
+};
+
+apiBlog.getMyBlogList = (opts) => {
+	return api.user.checkAuth(opts)
+	.then((u) => {
+		return new Promise((resolve, reject) => {
+			db.collection('blogs').find({uId: u._id}).toArray((e, r) => {
+				if (e) return reject(e);
+				resolve(r);
+			});
+		});
+	})
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 let init = () => {
 	return helper.getConfig()

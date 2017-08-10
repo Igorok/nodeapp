@@ -46,6 +46,27 @@ let init = () => {
 				};
 				res.render('simple_view', opts);
 			});
+			router.get('/post-detail/:postId', function(req, res, next) {
+				let opts = {
+					javascript: ['post_detail'],
+					variables: {postId: req.params.postId ? req.params.postId.toString() : null},
+					title: 'Express Post'
+				};
+				res.render('simple_view', opts);
+			});
+
+
+
+			router.get('/my-blog-list', function(req, res, next) {
+				let opts = {
+					javascript: ['my_blog_list'],
+					title: 'Express'
+				};
+				res.render('simple_view', opts);
+			});
+
+
+
 			router.get('/user-list', function(req, res, next) {
 				let opts = {
 					javascript: ['user_list'],
@@ -54,12 +75,17 @@ let init = () => {
 				res.render('simple_view', opts);
 			});
 
+
+
+
+
+
 			router.post('/fetch', (req, res, next) => {
 				if (
 					! req.body.fetch ||
 					! req.body.fetch.length
 				) {
-					return res.status(404).send('Api not found');
+					return res.status(404).json('Api not found');
 				}
 
 				let fetch = req.body.fetch.split('.');
@@ -71,7 +97,7 @@ let init = () => {
 					! api[a] ||
 					! api[a][f]
 				) {
-					return res.status(404).send('Api not found');
+					return res.status(404).json('Api not found');
 				}
 
 				delete req.body.fetch;

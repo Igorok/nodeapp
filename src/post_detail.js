@@ -9,24 +9,24 @@ import 'bootstrap/dist/css/bootstrap.css';
 import './styles/index.scss'
 
 import {layout} from './helpers/component'
-import BlogListComp from './Blog/ListComp'
-
 import auth from './Auth/AuthRed'
-import blogList from './Blog/ListRed'
+
+// custom part
+import PostDetailComp from './Blog/PostDetailComp'
+import postDetail from './Blog/PostDetailRed'
 
 let store = createStore(
 	combineReducers({
 		auth: auth,
-		blogList: blogList,
+		postDetail: postDetail,
 	}),
 	compose(
 		applyMiddleware(thunk),
 		applyMiddleware(createLogger()),
 	)
-	
 );
 
-let Comp = layout(BlogListComp);
+let Comp = layout(PostDetailComp);
 render(
 	<Provider store={store}>
 		<Comp />

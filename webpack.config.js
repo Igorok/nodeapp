@@ -42,13 +42,15 @@ const config = new Promise ((resolve, reject) => {
 
 	resolve({
 		entry: {
-			index: path.resolve(__dirname, 'src/index.js'),
-
 			login: path.resolve(__dirname, 'src/login.js'),
 			profile: path.resolve(__dirname, 'src/profile.js'),
 			about: path.resolve(__dirname, 'src/about.js'),
 			blog_list: path.resolve(__dirname, 'src/blog_list.js'),
 			blog_detail: path.resolve(__dirname, 'src/blog_detail.js'),
+			post_detail: path.resolve(__dirname, 'src/post_detail.js'),
+
+			my_blog_list: path.resolve(__dirname, 'src/my_blog_list.js'),
+
 			user_list: path.resolve(__dirname, 'src/user_list.js'),
 		},
 		output: {

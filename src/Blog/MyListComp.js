@@ -28,8 +28,8 @@ class BlogListItem extends React.Component {
 class BlogListComp extends React.Component {
 	componentWillMount () {
 		this.props.dispatch(api({
-			type: 'BLOG_LIST',
-			fetch: 'blog.getBlogList',
+			type: 'MY_BLOG_LIST',
+			fetch: 'blog.getMyBlogList',
 		}));
 	}
 

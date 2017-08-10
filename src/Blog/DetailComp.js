@@ -30,10 +30,10 @@ class Blog extends React.Component {
 
 		return <div className="panel panel-default">
 			<div className="panel-heading">
-				<h3 className='panel-title'>
+				<h4 className='panel-title'>
 					<span className='glyphicon glyphicon-bookmark'></span>&nbsp;&nbsp;
 					{this.props.blogDetail.name}
-				</h3>
+				</h4>
 			</div>
 			<div className="panel-body">
 				<Alert opts={alertOpts} />
@@ -42,9 +42,9 @@ class Blog extends React.Component {
 				</p>
 				<p>
 					<span className='glyphicon glyphicon-user'></span>&nbsp;&nbsp;
-					Creator: {this.props.blogDetail.user}&nbsp;&nbsp;
+					{this.props.blogDetail.user}&nbsp;&nbsp;
 					<span className='glyphicon glyphicon-time'></span>&nbsp;&nbsp;
-					Created: {this.props.blogDetail.created}
+					{this.props.blogDetail.created}
 				</p>
 			</div>
 		</div>
@@ -62,19 +62,18 @@ class PostListItem extends React.Component {
 		return <div className="col-md-4">
 			<div className="panel panel-default">
 				<div className="panel-heading">
-					<h3 className='panel-title'>
+					<h4 className='panel-title'>
 						<span className='glyphicon glyphicon-file'></span>&nbsp;&nbsp;
 						<a href={postLink}>{this.props.item.name}</a>
-					</h3>
+					</h4>
 				</div>
 				<div className="panel-body">
 					<p>{this.props.item.description}</p>
 					<p>
 						<span className='glyphicon glyphicon-user'></span>&nbsp;&nbsp;
-						Creator: {this.props.item.user}&nbsp;&nbsp;
-						<br />
+						{this.props.item.user}&nbsp;&nbsp;
 						<span className='glyphicon glyphicon-time'></span>&nbsp;&nbsp;
-						Created: {this.props.item.created}
+						{this.props.item.created}
 					</p>
 				</div>
 			</div>
