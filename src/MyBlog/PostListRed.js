@@ -3,34 +3,28 @@ let initState = {
 	status: null,
 	error: null,
 	blogId: blogId,
-	created: '',
-	user: '',
-	name: '',
-	description: '',
+	list: [],
 };
-const blogDetail = (state = initState, action) => {
+const postList = (state = initState, action) => {
 	switch (action.type) {
-		// detail of the blog
-		case 'BLOG_DETAIL_SEND':
+		case 'POST_LIST_SEND':
 			state = {...state};
 			state.status = 'send';
 			return state;
-		case 'BLOG_DETAIL_SUCCESS':
+		case 'POST_LIST_SUCCESS':
 			state = {...state};
-			state.created = action.data.created;
-			state.user = action.data.user;
-			state.name = action.data.name;
-			state.description = action.data.description;
+			state.list = action.data;
 			state.status = 'success';
 			return state;
-		case 'BLOG_DETAIL_ERROR':
+		case 'POST_LIST_EROR':
 			state = {...state};
 			state.status = 'error';
 			state.error = action.error;
+			state.list = [];
 			return state;
 		default:
 			return state;
 	}
 }
 
-export default blogDetail;
+export default postList;

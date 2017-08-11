@@ -50,6 +50,7 @@ const config = new Promise ((resolve, reject) => {
 			post_detail: path.resolve(__dirname, 'src/post_detail.js'),
 
 			my_blog_list: path.resolve(__dirname, 'src/my_blog_list.js'),
+			my_blog_detail: path.resolve(__dirname, 'src/my_blog_detail.js'),
 
 			user_list: path.resolve(__dirname, 'src/user_list.js'),
 		},

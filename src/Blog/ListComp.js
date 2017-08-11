@@ -9,7 +9,6 @@ class BlogListItem extends React.Component {
 			<div className="panel panel-default">
 				<div className="panel-heading">
 					<h4 className="panel-title">
-						<span className='glyphicon glyphicon-bookmark'></span>&nbsp;&nbsp;
 						<a href = {"/blog-detail/" + this.props.item._id}>
 							{this.props.item.name}
 						</a>

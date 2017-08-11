@@ -1,58 +1,12 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import 'jquery';
+import 'bootstrap/dist/js/bootstrap';
+
 
 import {api} from '../helpers/action'
 import {Alert} from '../helpers/component'
-
-// blog widget
-class Blog extends React.Component {
-	componentWillMount () {
-		this.props.dispatch(api({
-			type: 'BLOG_DETAIL',
-			fetch: 'blog.getBlogDetail',
-			_id: this.props.blogDetail.blogId
-		}));
-	}
-	render () {
-		let alertOpts = null;
-		
-		if (this.props.blogDetail.status === 'error') {
-			alertOpts = {
-				className: 'danger',
-				text: this.props.blogDetail.error
-			}
-		} else if (this.props.blogDetail.status === 'send') {
-			alertOpts = {
-				className: 'info',
-				text: 'Loading, please wait',
-			}
-		}
-
-		return <div className="panel panel-default">
-			<div className="panel-heading">
-				<h4 className='panel-title'>
-					{this.props.blogDetail.name}
-				</h4>
-			</div>
-			<div className="panel-body">
-				<Alert opts={alertOpts} />
-				<p >
-					{this.props.blogDetail.description}
-				</p>
-				<p>
-					<span className='glyphicon glyphicon-user'></span>&nbsp;&nbsp;
-					{this.props.blogDetail.user}&nbsp;&nbsp;
-					<span className='glyphicon glyphicon-time'></span>&nbsp;&nbsp;
-					{this.props.blogDetail.created}
-				</p>
-			</div>
-		</div>
-	}
-}
-const blogStateToProps = (state) => {
-	return {blogDetail: state.blogDetail};
-}
-Blog = connect(blogStateToProps)(Blog);
+import Blog from './BlogComp'
 
 // post list widget
 class PostListItem extends React.Component {
@@ -62,6 +16,7 @@ class PostListItem extends React.Component {
 			<div className="panel panel-default">
 				<div className="panel-heading">
 					<h4 className='panel-title'>
+						<span className='glyphicon glyphicon-file'></span>&nbsp;&nbsp;
 						<a href={postLink}>{this.props.item.name}</a>
 					</h4>
 				</div>
@@ -122,15 +77,4 @@ const postStateToProps = (state) => {
 	return {postList: state.postList};
 }
 PostList = connect(postStateToProps)(PostList);
-
-
-class BlogDetailComp extends React.Component {
-	render () {		
-		return <div>
-			<Blog />
-			<PostList />
-		</div>
-		
-	}
-}
-export default BlogDetailComp
+export default PostList;

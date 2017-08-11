@@ -55,8 +55,6 @@ let init = () => {
 				res.render('simple_view', opts);
 			});
 
-
-
 			router.get('/my-blog-list', function(req, res, next) {
 				let opts = {
 					javascript: ['my_blog_list'],
@@ -64,7 +62,22 @@ let init = () => {
 				};
 				res.render('simple_view', opts);
 			});
-
+			router.get('/my-blog-detail/:blogId', function(req, res, next) {
+				let opts = {
+					javascript: ['my_blog_detail'],
+					variables: {blogId: req.params.blogId ? req.params.blogId.toString() : null},
+					title: 'Express Post'
+				};
+				res.render('simple_view', opts);
+			});
+			router.get('/my-post-detail/:postId', function(req, res, next) {
+				let opts = {
+					javascript: ['my_post_detail'],
+					variables: {postId: req.params.postId ? req.params.postId.toString() : null},
+					title: 'Express Post'
+				};
+				res.render('simple_view', opts);
+			});
 
 
 			router.get('/user-list', function(req, res, next) {
@@ -106,6 +119,7 @@ let init = () => {
 						return res.json(r || null);
 					})
 					.catch(e => {
+						if (e.message) e = e.message;
 						let status = 500;
 						if (e === 403) status = 403;
 						console.trace('rout error', e);

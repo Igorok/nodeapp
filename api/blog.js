@@ -61,7 +61,7 @@ apiBlog.getBlogDetail = (opts) => {
 	opts._id = helper.mongoId(opts._id.toString());
 
 	return new Promise((resolve, reject) => {
-		db.collection('blogs').findOne({_id: opts._id}, (e, r) => {
+		db.collection('blogs').findOne({_id: opts._id, public: true}, (e, r) => {
 			if (e) return reject(e);
 			if (! r) return reject(new Error('The blog not found'));
 			blog = r;
@@ -196,7 +196,74 @@ apiBlog.getMyBlogList = (opts) => {
 		});
 	})
 }
+apiBlog.getMyBlogDetail = (opts) => {
+	let blog = null,
+		user = null;
+	if (! opts._id) {
+		return Promise.reject(new Error('The blog not found'));
+	}
+	opts._id = helper.mongoId(opts._id.toString());
 
+	return api.user.checkAuth(opts)
+	.then((u) => {
+		user = u;
+		return new Promise((resolve, reject) => {
+			db.collection('blogs').findOne({_id: opts._id, uId: user._id}, (e, r) => {
+				if (e) return reject(e);
+				if (! r) return reject(new Error('The blog not found'));
+				blog = r;
+				resolve(blog);
+			});
+		});
+	})
+};
+
+apiBlog.editMyBlog = (opts) => {
+	let user = null;
+	if (! opts._id) {
+		return Promise.reject(new Error('Blog not found'));
+	}
+	if (! opts.name || ! opts.description) {
+		return Promise.reject(new Error('Name and description are required'));
+	}
+
+	opts._id = helper.mongoId(opts._id.toString());
+
+	let setObj = {
+		name: opts.name.toString().trim(),
+		description: opts.description.toString().trim(),
+		public: !! opts.public,
+		updated: new Date(),
+	};
+	let q = {_id: opts._id};
+	return api.user.checkAuth(opts)
+	.then((u) => {
+		user = u;
+		return new Promise((resolve, reject) => {
+			db.collection('blogs').findOne(q, (e, r) => {
+				if (e) return reject(e);
+				if (! r) return reject(new Error('Blog not found'));
+
+				if (
+					setObj.name === r.name &&
+					setObj.description === r.description &&
+					setObj.public === r.public
+				) {
+					return reject(new Error('Nothing to edit'));
+				}
+				resolve();
+			});
+		});
+	})
+	.then(() => {
+		return new Promise((resolve, reject) => {
+			db.collection('blogs').update(q, {$set: setObj}, (e) => {
+				if (e) return reject(e);
+				resolve();
+			});
+		});
+	});
+};
 
 
 
