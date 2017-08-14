@@ -1,7 +1,7 @@
 let blogId = window.locals.blogId || null;
 let initState = {
-	status: null,
-	error: null,
+	fetch_status: null,
+	fetch_error: null,
 	blogId: blogId,
 	created: '',
 	public: null,
@@ -14,7 +14,7 @@ const blogDetail = (state = initState, action) => {
 		// detail of the blog
 		case 'BLOG_DETAIL_SEND':
 			state = {...state};
-			state.status = 'send';
+			state.fetch_status = 'send';
 			return state;
 		case 'BLOG_DETAIL_SUCCESS':
 			state = {...state};
@@ -22,29 +22,29 @@ const blogDetail = (state = initState, action) => {
 			state.public = action.data.public;
 			state.name = action.data.name;
 			state.description = action.data.description;
-			state.status = 'success';
+			state.fetch_status = 'success';
 			return state;
 		case 'BLOG_DETAIL_ERROR':
 			state = {...state};
-			state.status = 'error';
-			state.error = action.error;
+			state.fetch_status = 'error';
+			state.fetch_error = action.error;
 			return state;
 
 		case 'BLOG_EDIT_SEND':
 			state = {...state};
-			state.status = 'send_edit';
+			state.fetch_status = 'send_edit';
 			state.public = action.public;
 			state.name = action.name;
 			state.description = action.description;
 			return state;
 		case 'BLOG_EDIT_SUCCESS':
 			state = {...state};
-			state.status = 'success_edit';
+			state.fetch_status = 'success_edit';
 			return state;
 		case 'BLOG_EDIT_ERROR':
 			state = {...state};
-			state.status = 'error_edit';
-			state.error = action.error;
+			state.fetch_status = 'error_edit';
+			state.fetch_error = action.error;
 			return state;
 		default:
 			return state;

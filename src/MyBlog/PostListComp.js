@@ -11,7 +11,7 @@ import Blog from './BlogComp'
 // post list widget
 class PostListItem extends React.Component {
 	render () {
-		let postLink = '/post-detail/' + this.props.item._id;
+		let postLink = '/my-post-detail/' + this.props.item._id;
 		return <div className="col-md-4">
 			<div className="panel panel-default">
 				<div className="panel-heading">
@@ -46,12 +46,12 @@ class PostList extends React.Component {
 		let alertOpts = null,
 			postList = null;
 		
-		if (this.props.postList.status === 'error') {
+		if (this.props.postList.fetch_status === 'error') {
 			alertOpts = {
 				className: 'danger',
-				text: this.props.error
+				text: this.props.fetch_error
 			}
-		} else if (this.props.postList.status === 'send') {
+		} else if (this.props.postList.fetch_status === 'send') {
 			alertOpts = {
 				className: 'info',
 				text: 'Loading, please wait',

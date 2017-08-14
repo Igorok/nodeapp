@@ -266,6 +266,86 @@ apiBlog.editMyBlog = (opts) => {
 };
 
 
+apiBlog.getMyPostDetail = (opts) => {
+	let post = null;
+
+	if (! opts._id) {
+		return Promise.reject(new Error('The blog not found'));
+	}
+	opts._id = helper.mongoId(opts._id.toString());
+	
+	return api.user.checkAuth(opts)
+	.then((u) => {
+		return new Promise((resolve, reject) => {
+			db.collection('posts').findOne({_id: opts._id, uId: u._id}, (e, r) => {
+				if (e) return reject(e);
+				if (! r) return reject(new Error('The blog not found'));
+				post = r;
+				resolve();
+			});
+		});
+	})
+	.then(() => {
+		return new Promise((resolve, reject) => {
+			db.collection('blogs').findOne({_id: post._bId}, (e, r) => {
+				if (e) return reject(e);
+				post.blogName = r ? r.name : null;
+				resolve(post);
+			});
+		});
+	})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	let blog = null,
+		user = null;
+	if (! opts._id) {
+		return Promise.reject(new Error('The blog not found'));
+	}
+	opts._id = helper.mongoId(opts._id.toString());
+
+	return api.user.checkAuth(opts)
+	.then((u) => {
+		user = u;
+		return new Promise((resolve, reject) => {
+			db.collection('blogs').findOne({_id: opts._id, uId: user._id}, (e, r) => {
+				if (e) return reject(e);
+				if (! r) return reject(new Error('The blog not found'));
+				blog = r;
+				resolve(blog);
+			});
+		});
+	})
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

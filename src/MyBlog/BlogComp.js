@@ -41,7 +41,7 @@ class Modal extends React.Component {
 			description: newProps.blogDetail.description,
 		});
 
-		if (newProps.blogDetail.status === 'success_edit') {
+		if (newProps.blogDetail.fetch_status === 'success_edit') {
 			this.props.dispatch(api({
 				type: 'BLOG_DETAIL',
 				fetch: 'blog.getMyBlogDetail',
@@ -55,17 +55,17 @@ class Modal extends React.Component {
 	}
 	render () {
 		let alertOpts = null;
-		if (this.props.blogDetail.status === 'error_edit') {
+		if (this.props.blogDetail.fetch_status === 'error_edit') {
 			alertOpts = {
 				className: 'danger',
-				text: this.props.blogDetail.error
+				text: this.props.blogDetail.fetch_error
 			}
-		} else if (this.props.blogDetail.status === 'send_edit') {
+		} else if (this.props.blogDetail.fetch_status === 'send_edit') {
 			alertOpts = {
 				className: 'info',
 				text: 'Loading, please wait',
 			}
-		} else if (this.props.blogDetail.status === 'success_edit') {
+		} else if (this.props.blogDetail.fetch_status === 'success_edit') {
 			alertOpts = {
 				className: 'success',
 				text: 'Edited successfully',
@@ -162,12 +162,12 @@ class Blog extends React.Component {
 			</p>
 		}
 
-		if (this.props.blogDetail.status === 'error') {
+		if (this.props.blogDetail.fetch_status === 'error') {
 			alertOpts = {
 				className: 'danger',
-				text: this.props.blogDetail.error
+				text: this.props.blogDetail.fetch_error
 			}
-		} else if (this.props.blogDetail.status === 'send') {
+		} else if (this.props.blogDetail.fetch_status === 'send') {
 			alertOpts = {
 				className: 'info',
 				text: 'Loading, please wait',

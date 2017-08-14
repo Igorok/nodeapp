@@ -50,19 +50,19 @@ class BlogListComp extends React.Component {
 		let alertOpts = null,
 			blogs = null;
 	
-		if (this.props.blogList.status === 'error') {
+		if (this.props.blogList.fetch_status === 'error') {
 			alertOpts = {
 				className: 'danger',
-				text: this.props.blogList.error
+				text: this.props.blogList.fetch_error
 			}
-		} else if (this.props.blogList.status === 'send') {
+		} else if (this.props.blogList.fetch_status === 'send') {
 			alertOpts = {
 				className: 'info',
 				text: 'Loading, please wait',
 			}
 		}
 
-		if (this.props.blogList.status === 'success' && this.props.blogList.list.length) {
+		if (this.props.blogList.fetch_status === 'success' && this.props.blogList.list.length) {
 			blogs = this.props.blogList.list.map((val) => {
 				return <BlogListItem item={val} key={val._id} dispatch={this.props.dispatch} />
 			});

@@ -6,10 +6,10 @@ import 'bootstrap/dist/css/bootstrap.css';
 import './styles/index.scss'
 
 import {layout} from './helpers/component'
-import ListComp from './MyBlog/MyListComp'
+import ListComp from './MyBlog/BlogListComp'
 
 import auth from './Auth/AuthRed'
-import blogList from './MyBlog/MyListRed'
+import blogList from './MyBlog/BlogListRed'
 
 import {configureStore} from './helpers/configureStore'
 

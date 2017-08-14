@@ -1,23 +1,23 @@
 let initState = {
 	list: [],
-	status: null,
+	fetch_status: null,
 };
 const blogList = (state = initState, action) => {
 	switch (action.type) {
 		case 'MY_BLOG_LIST_SEND':
 			return {
-				status: 'send',
+				fetch_status: 'send',
 				list: state.list,
 			};
 		case 'MY_BLOG_LIST_SUCCESS':
 			return {
-				status: 'success',
+				fetch_status: 'success',
 				list: action.data,
 			};
 		case 'MY_BLOG_LIST_ERROR':
 			return {
-				status: 'error',
-				error: action.error,
+				fetch_status: 'error',
+				fetch_error: action.error,
 				list: [],
 			};
 		default:

@@ -4,13 +4,6 @@ const webpack = require('webpack');
 
 
 
-// var	style-loader = require('style-loader');
-// var	css-loader = require('css-loader');
-
-// const helper = require(__dirname + '/helpers/helper.js');
-// const h = new helper();
-// var ExtractTextPlugin = require("extract-text-webpack-plugin");
-
 const config = new Promise ((resolve, reject) => {
 	let plugins = [
 		new webpack.optimize.OccurrenceOrderPlugin(),
@@ -51,6 +44,7 @@ const config = new Promise ((resolve, reject) => {
 
 			my_blog_list: path.resolve(__dirname, 'src/my_blog_list.js'),
 			my_blog_detail: path.resolve(__dirname, 'src/my_blog_detail.js'),
+			my_post_detail: path.resolve(__dirname, 'src/my_post_detail.js'),
 
 			user_list: path.resolve(__dirname, 'src/user_list.js'),
 		},
@@ -60,11 +54,6 @@ const config = new Promise ((resolve, reject) => {
 			path: path.resolve(__dirname, 'public/javascripts/')
 		},
 		module: {
-			loaders: [
-				{test: /helper\/browser\/helper\.js$/, loader: 'exports?helper'},
-				
-
-			],
 			rules: [
 				{ test: /\.css$/, use: ['style-loader', 'css-loader', 'postcss-loader'] },
 				{ test: /\.scss$/, use: ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader'] },
