@@ -4,13 +4,6 @@ const webpack = require('webpack');
 
 
 
-// var	style-loader = require('style-loader');
-// var	css-loader = require('css-loader');
-
-// const helper = require(__dirname + '/helpers/helper.js');
-// const h = new helper();
-// var ExtractTextPlugin = require("extract-text-webpack-plugin");
-
 const config = new Promise ((resolve, reject) => {
 	let plugins = [
 		new webpack.optimize.OccurrenceOrderPlugin(),
@@ -19,12 +12,41 @@ const config = new Promise ((resolve, reject) => {
 			name: 'common',
 			minChunks: 2,
 		}),
+		new webpack.ProvidePlugin({
+			$: "jquery",
+			jQuery: "jquery",
+			"window.jQuery": "jquery",
+			Tether: "tether",
+			"window.Tether": "tether",
+			Alert: "exports-loader?Alert!bootstrap/js/dist/alert",
+			Button: "exports-loader?Button!bootstrap/js/dist/button",
+			Carousel: "exports-loader?Carousel!bootstrap/js/dist/carousel",
+			Collapse: "exports-loader?Collapse!bootstrap/js/dist/collapse",
+			Dropdown: "exports-loader?Dropdown!bootstrap/js/dist/dropdown",
+			Modal: "exports-loader?Modal!bootstrap/js/dist/modal",
+			Popover: "exports-loader?Popover!bootstrap/js/dist/popover",
+			Scrollspy: "exports-loader?Scrollspy!bootstrap/js/dist/scrollspy",
+			Tab: "exports-loader?Tab!bootstrap/js/dist/tab",
+			Tooltip: "exports-loader?Tooltip!bootstrap/js/dist/tooltip",
+			Util: "exports-loader?Util!bootstrap/js/dist/util",
+		})
 	]
 	plugins.push(new webpack.optimize.UglifyJsPlugin());
 
 	resolve({
 		entry: {
-			index: path.resolve(__dirname, 'src/index.js'),
+			login: path.resolve(__dirname, 'src/login.js'),
+			profile: path.resolve(__dirname, 'src/profile.js'),
+			about: path.resolve(__dirname, 'src/about.js'),
+			blog_list: path.resolve(__dirname, 'src/blog_list.js'),
+			blog_detail: path.resolve(__dirname, 'src/blog_detail.js'),
+			post_detail: path.resolve(__dirname, 'src/post_detail.js'),
+
+			my_blog_list: path.resolve(__dirname, 'src/my_blog_list.js'),
+			my_blog_detail: path.resolve(__dirname, 'src/my_blog_detail.js'),
+			my_post_detail: path.resolve(__dirname, 'src/my_post_detail.js'),
+
+			user_list: path.resolve(__dirname, 'src/user_list.js'),
 		},
 		output: {
 			filename: '[name].js',
@@ -32,17 +54,18 @@ const config = new Promise ((resolve, reject) => {
 			path: path.resolve(__dirname, 'public/javascripts/')
 		},
 		module: {
-			loaders: [
-				{
-					test: /helper\/browser\/helper\.js$/,
-					loader: 'exports?helper'
-				},
-			],
 			rules: [
-				// {
-				// 	test: /\.css$/,
-				// 	use: [ 'style-loader', 'css-loader' ]
-				// },
+				{ test: /\.css$/, use: ['style-loader', 'css-loader', 'postcss-loader'] },
+				{ test: /\.scss$/, use: ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader'] },
+				{
+					test: /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+					use: 'url-loader?limit=10000',
+				},
+				{
+					test: /\.(ttf|eot|svg)(\?[\s\S]+)?$/,
+					use: 'file-loader',
+				},
+				{ test: /bootstrap-sass\/assets\/javascripts\//, use: 'imports-loader?jQuery=jquery' },
 				{
 					test: /\.(js|jsx)$/,
 					// exclude: /(node_modules|bower_components)/,

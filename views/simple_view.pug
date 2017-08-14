@@ -1,0 +1,10 @@
+extends layout
+block content
+	div#root
+	if variables
+		script.
+			window.locals = !{JSON.stringify(variables)};
+	script(type="text/javascript" src="/javascripts/common.js")
+	each val in javascript
+		script(type="text/javascript" src="/javascripts/" + val + ".js")
+	
