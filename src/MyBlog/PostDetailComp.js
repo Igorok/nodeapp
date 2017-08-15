@@ -5,12 +5,62 @@ import {api} from '../helpers/action'
 import {Alert} from '../helpers/component'
 
 class PostDetailComp extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			name: this.props.postDetail.name,
+			description: this.props.postDetail.description,
+			status: this.props.postDetail.status,
+		}
+		this.statArr = [
+			{key: 'write', text: 'Write'},
+			{key: 'publish', text: 'Publish'},
+			{key: 'archive', text: 'Archive'},
+		];
+	}
+	
+
+	fieldChange (e) {
+		let stateObj = {};
+		stateObj[e.target.id] = e.target.value;
+		this.setState(stateObj);
+	}
+
+	formSubmit (e) {
+		e.preventDefault();
+
+
+		// this.props.dispatch(api({
+		// 	type: 'BLOG_EDIT',
+		// 	fetch: 'blog.editMyBlog',
+		// 	_id: this.props.blogDetail.blogId,
+		// 	public: this.state.public,
+		// 	name: this.state.name,
+		// 	description: this.state.description,
+		// }));
+	}
+
 	componentWillMount () {
 		this.props.dispatch(api({
 			type: 'POST_DETAIL',
 			fetch: 'blog.getMyPostDetail',
 			_id: this.props.postDetail.postId
 		}));
+	}
+	componentWillReceiveProps (newProps) {
+		this.setState({
+			name: newProps.postDetail.name,
+			description: newProps.postDetail.description,
+			status: newProps.postDetail.status,
+		});
+
+		// if (newProps.blogDetail.fetch_status === 'success_edit') {
+		// 	this.props.dispatch(api({
+		// 		type: 'POST_DETAIL',
+		// 		fetch: 'blog.getMyPostDetail',
+		// 		_id: this.props.postDetail.postId
+		// 	}));
+		// }
 	}
 	render () {		
 		let alertOpts = null,
@@ -27,11 +77,8 @@ class PostDetailComp extends React.Component {
 				text: 'Loading, please wait',
 			}
 		}
-
 		
 		return <div >
-			<Alert opts={alertOpts} />
-
 			<ol className="breadcrumb">
 				<li>
 					<a href="/profile">
@@ -49,23 +96,66 @@ class PostDetailComp extends React.Component {
 						{this.props.postDetail.blogName}
 					</a>
 				</li>
-
-				
-				<li className="active">{this.props.postDetail.name}</li>
+				<li className="active">
+					{this.state.name}
+				</li>
 			</ol>
 
 			<div className="panel panel-default">
 				<div className="panel-body">
-					<p>
-						<span className='glyphicon glyphicon-user'></span>&nbsp;&nbsp;
-						{this.props.postDetail.user}&nbsp;&nbsp;
-						<span className='glyphicon glyphicon-time'></span>&nbsp;&nbsp;
-						{this.props.postDetail.created}
-					</p>
-					<p className='h4'>
-						{this.props.postDetail.name}
-					</p>
-					<p>{this.props.postDetail.description}</p>
+					<form onSubmit={::this.formSubmit}>
+						<div className="modal-body">
+							<Alert opts={alertOpts} />
+
+							<div className="form-group">
+								<label htmlFor="name">Name</label>
+								<input 
+									type="text" 
+									className="form-control" 
+									id="name" 
+									placeholder="Name" 
+									onChange={::this.fieldChange}
+									value={this.state.name}
+								/>
+							</div>
+							<div className="form-group">
+								<label htmlFor="exampleInputPassword1">Description</label>
+								<textarea 
+									className="form-control" 
+									id="description" 
+									placeholder="Description" 
+									onChange={::this.fieldChange} 
+									value={this.state.description}
+								/>
+							</div>
+
+							<div className="form-group">
+								<select 
+									id = 'status'
+									className="form-control" 
+									value = {this.state.status}
+									onChange = {::this.fieldChange}
+								>
+									{this.statArr.map((v) => {
+										return <option 
+											value = {v.key}
+											key = {v.key}
+										>
+											{v.text}
+										</option>
+									})}
+								</select>
+							</div>
+						</div>
+						<div className="modal-footer">
+							<button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
+							<button type="submit" className="btn btn-primary">
+								<span className='glyphicon glyphicon-floppy-disk'></span>&nbsp;
+								Save changes
+							</button>
+						</div>
+					</form>
+
 				</div>
 			</div>
 		</div>
