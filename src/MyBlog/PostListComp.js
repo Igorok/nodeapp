@@ -1,5 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import DOMPurify from 'dompurify'
 import 'jquery';
 import 'bootstrap/dist/js/bootstrap';
 
@@ -21,12 +22,17 @@ class PostListItem extends React.Component {
 					</h4>
 				</div>
 				<div className="panel-body">
-					<p>{this.props.item.description}</p>
+					<div
+						dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(this.props.item.description)}}
+					></div>
 					<p>
-						<span className='glyphicon glyphicon-user'></span>&nbsp;&nbsp;
-						{this.props.item.user}&nbsp;&nbsp;
+						Status: {this.props.item.status}&nbsp;&nbsp;
+						Approved: {this.props.item.approved}&nbsp;&nbsp;
+					</p>
+					<p>
 						<span className='glyphicon glyphicon-time'></span>&nbsp;&nbsp;
-						{this.props.item.created}
+						Created: {this.props.item.created}&nbsp;&nbsp;
+						Updated: {this.props.item.updated}&nbsp;&nbsp;
 					</p>
 				</div>
 			</div>
@@ -38,7 +44,7 @@ class PostList extends React.Component {
 	componentWillMount () {
 		this.props.dispatch(api({
 			type: 'POST_LIST',
-			fetch: 'blog.getBlogPosts',
+			fetch: 'blog.getMyBlogPosts',
 			_id: this.props.postList.blogId
 		}));
 	}

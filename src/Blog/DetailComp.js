@@ -1,5 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import DOMPurify from 'dompurify'
 
 import {api} from '../helpers/action'
 import {Alert} from '../helpers/component'
@@ -28,23 +29,35 @@ class Blog extends React.Component {
 			}
 		}
 
-		return <div className="panel panel-default">
-			<div className="panel-heading">
-				<h4 className='panel-title'>
-					{this.props.blogDetail.name}
-				</h4>
-			</div>
-			<div className="panel-body">
-				<Alert opts={alertOpts} />
-				<p >
-					{this.props.blogDetail.description}
-				</p>
-				<p>
-					<span className='glyphicon glyphicon-user'></span>&nbsp;&nbsp;
-					{this.props.blogDetail.user}&nbsp;&nbsp;
-					<span className='glyphicon glyphicon-time'></span>&nbsp;&nbsp;
-					{this.props.blogDetail.created}
-				</p>
+		return <div>
+			<ol className="breadcrumb">
+				<li>
+					<a href="/blog-list">
+						<span className='glyphicon glyphicon-bookmark'></span>&nbsp;
+						Blogs
+					</a>
+				</li>
+				<li className="active">{this.props.blogDetail.name}</li>
+			</ol>
+		
+			<div className="panel panel-default">
+				<div className="panel-heading">
+					<h4 className='panel-title'>
+						{this.props.blogDetail.name}
+					</h4>
+				</div>
+				<div className="panel-body">
+					<Alert opts={alertOpts} />
+					<p >
+						{this.props.blogDetail.description}
+					</p>
+					<p>
+						<span className='glyphicon glyphicon-user'></span>&nbsp;&nbsp;
+						{this.props.blogDetail.user}&nbsp;&nbsp;
+						<span className='glyphicon glyphicon-time'></span>&nbsp;&nbsp;
+						{this.props.blogDetail.created}
+					</p>
+				</div>
 			</div>
 		</div>
 	}
@@ -66,7 +79,9 @@ class PostListItem extends React.Component {
 					</h4>
 				</div>
 				<div className="panel-body">
-					<p>{this.props.item.description}</p>
+					<div
+						dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(this.props.item.description)}}
+					></div>
 					<p>
 						<span className='glyphicon glyphicon-user'></span>&nbsp;&nbsp;
 						{this.props.item.user}&nbsp;&nbsp;

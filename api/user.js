@@ -3,20 +3,72 @@ const crypto = require('crypto');
 const _ = require('lodash');
 const moment = require('moment');
 
+
+
 let cfg = null,
 	db = null,
 	apiUser = {};
 
-apiUser.getUserList = (opts) => {
-	return apiUser.checkAuth(opts)
-		.then((user) => {
-			return new Promise((resolve, reject) => {
-				db.collection('users').find({status: 1}, {login: 1, email: 1}).toArray((e, r) => {
-					if (e) return reject(e);
+apiUser.checkOnline = (dt) => {
+	if (! dt || ! dt.valueOf()) return false;
 
-					resolve(r)
+	return Date.now() - dt.valueOf() < 5 * 60 * 1000;
+};
+
+
+apiUser.getUserList = (opts) => {
+	let user = null,
+		uArr = [];
+	return apiUser.checkAuth(opts)
+		.then((u) => {
+			return new Promise((resolve, reject) => {
+				user = u;
+				let q = {
+					_id: {$ne: user._id},
+					status: 1,
+				};
+				let rows = {
+					login: 1, 
+					dtActive: 1,
+				};
+
+				db.collection('users').find({_id: {$ne: user._id}, status: 1}, rows).toArray((e, r) => {
+					if (e) return reject(e);
+					uArr = r || [];
+					resolve();
 				});
 			});
+		})
+		.then(() => {
+			let frById = {},
+				reqById = {},
+				myReqById = {};
+
+			_.forEach(user.friends, function (f) {
+				frById[f._id.toString()] = f._id;
+			});
+			_.forEach(user.friendRequests, function (f) {
+				reqById[f._id.toString()] = f._id;
+			});
+			_.forEach(user.selfFriendRequests, function (f) {
+				myReqById[f._id.toString()] = f._id;
+			});
+
+			uArr = uArr.map((u) => {
+				if (frById[u._id]) {
+					u.friend = 'fr';
+				} else if (reqById[u._id]) {
+					u.friend = 'fr_req';
+				} else if (myReqById[u._id]) {
+					u.friend = 'my_fr_req';
+				} else {
+					u.friend = 'not_fr';
+				}
+
+				u.online = apiUser.checkOnline(u.dtActive);
+				return u;
+			});
+			return uArr;
 		});
 };
 
@@ -180,7 +232,7 @@ apiUser.getAuth = (opts) => {
 
 apiUser.checkAuth = (opts) => {
 	if (! opts.token) {
-		return Promise.reject(403);
+		return Promise.reject(new Error(403));
 	}
 	let user = null,
 		device = opts.dev ? opts.dev.toString() : 'web';
@@ -192,7 +244,7 @@ apiUser.checkAuth = (opts) => {
 		};
 		db.collection('users').findOne(q, (e, u) => {
 			if (e) return reject(e);
-			if (! u) return reject(403);
+			if (! u) return reject(new Error(403));
 
 			user = u;
 			resolve();
@@ -205,7 +257,7 @@ apiUser.checkAuth = (opts) => {
 			});
 
 			if (Date.now() > devToken.dtExpire.valueOf()) {
-				return resolve(403);
+				return reject(new Error(403));
 			}
 
 			let q = {_id: user._id};
@@ -221,6 +273,127 @@ apiUser.checkAuth = (opts) => {
 }
 
 
+/**
+ * @param {Object} opts:
+ * @param {string} opts._id - _id of user to change friend status
+ * @param {string} opts.tyfriendpe - type of friend status
+ */
+apiUser.updateFriend = (opts) => {
+	if (! opts._id || ! opts.friend) {
+		return Promise.reject(new Error('Login and email are required'));
+	}
+
+	let user = null;
+	let _id = helper.mongoId(opts._id.toString());
+	let friend = opts.friend.toString();
+	let userUpd = (q, setObj) => {
+		return new Promise((resolve, reject) => {
+			db.collection('users').update(q, setObj, (e, r) => {
+				if (e) return reject(e);
+				resolve();
+			});
+		})
+	};
+
+	return apiUser.checkAuth(opts)
+	.then((u) => {
+		user = u;
+		let pArr = [];
+		// need to remove user from friend
+		if (friend === 'fr') {
+			let myQ = {_id: user._id};
+			let mySet = {$pull: {
+				friends: {_id: _id},
+			}};
+
+			let frQ = {_id: _id};
+			let frSet = {$pull: {
+				friends: {_id: user._id},
+			}};
+			return Promise.all([
+				userUpd(myQ, mySet),
+				userUpd(frQ, frSet),
+			])
+			.then(() => {
+				return {
+					_id: _id.toString(),
+					friend: 'not_fr',
+				}
+			});
+			
+		}
+		// request wait of my approve
+		else if (friend === 'fr_req') {
+			let myQ = {_id: user._id};
+			let mySet = {
+				$pull: {friendRequests: {_id: _id}},
+				$push: {friends: {_id: _id}},
+			};
+
+			let frQ = {_id: _id};
+			let frSet = {
+				$pull: {selfFriendRequests: {_id: user._id}},
+				$push: {friends: {_id: user._id}},
+			};
+			return Promise.all([
+				userUpd(myQ, mySet),
+				userUpd(frQ, frSet),
+			])
+			.then(() => {
+				return {
+					_id: _id.toString(),
+					friend: 'fr',
+				}
+			});
+		}
+		// need to remove from my request
+		else if (friend === 'my_fr_req') {
+			let myQ = {_id: user._id};
+			let mySet = {
+				$pull: {selfFriendRequests: {_id: _id}},
+			};
+
+			let frQ = {_id: _id};
+			let frSet = {
+				$pull: {friendRequests: {_id: user._id}},
+			};
+			return Promise.all([
+				userUpd(myQ, mySet),
+				userUpd(frQ, frSet),
+			])
+			.then(() => {
+				return {
+					_id: _id.toString(),
+					friend: 'not_fr',
+				}
+			});
+		}
+		// send request to user
+		else if (friend === 'not_fr') {
+			let myQ = {_id: user._id};
+			let mySet = {
+				$push: {selfFriendRequests: {_id: _id}},
+			};
+
+			let frQ = {_id: _id};
+			let frSet = {
+				$push: {friendRequests: {_id: user._id}},
+			};
+			return Promise.all([
+				userUpd(myQ, mySet),
+				userUpd(frQ, frSet),
+			])
+			.then(() => {
+				return {
+					_id: _id.toString(),
+					friend: 'my_fr_req',
+				}
+			});
+		} else {
+			return;
+		}
+	});
+};
 
 
 

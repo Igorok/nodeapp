@@ -137,7 +137,7 @@ apiBlog.getBlogPosts = (opts) => {
 		posts = posts.map((val) => {
 			val.user = loginById[val.uId];
 			val.created = moment(val.created).format('YYYY-MM-DD HH:mm');
-			val.description = val.description.substring(0, 140) + '...';
+			val.description = _.unescape(val.description.substring(0, 140) + '...');
 			delete val.uId;
 			return val;
 		});
@@ -172,6 +172,7 @@ apiBlog.getPostDetail = (opts) => {
 				if (e) return reject(e);
 				post.user = r ?  r.login : 'unknown';
 				post.created = moment(post.created).format('YYYY-MM-DD HH:mm');
+				post.description = _.unescape(post.description);
 
 				delete post.uId;
 				delete post.public;
@@ -218,6 +219,46 @@ apiBlog.getMyBlogDetail = (opts) => {
 	})
 };
 
+apiBlog.getMyBlogPosts = (opts) => {
+	let posts = [],
+		users = [];
+	if (! opts._id) {
+		return Promise.reject(new Error('The blog not found'));
+	}
+	opts._id = helper.mongoId(opts._id.toString());
+
+	return new Promise((resolve, reject) => {
+		let q = {
+			_bId: opts._id,
+		};
+		db.collection('posts').find(q).toArray((e, r) => {
+			if (e) return reject(e);
+			if (r && r.length) {
+				posts = r;
+			}
+			resolve();
+		});
+	})
+	.then(() => {
+		if (! posts.length) return posts;
+		var statObj = {
+			write: 'Write',
+			publish: 'Publish',
+			archive: 'Archive',
+		};
+
+		posts = posts.map((val) => {
+			val.created = moment(val.created).format('YYYY-MM-DD HH:mm');
+			val.updated = moment(val.updated).format('YYYY-MM-DD HH:mm');
+			val.description = _.unescape(val.description.substring(0, 140) + '...');
+			val.status = statObj[val.status];
+			val.approved = val.approved ? 'Approved' : 'Not approved';
+			return val;
+		});
+		return posts;
+	});
+};
+
 apiBlog.editMyBlog = (opts) => {
 	let user = null;
 	if (! opts._id) {
@@ -230,8 +271,8 @@ apiBlog.editMyBlog = (opts) => {
 	opts._id = helper.mongoId(opts._id.toString());
 
 	let setObj = {
-		name: opts.name.toString().trim(),
-		description: opts.description.toString().trim(),
+		name: _.escape(opts.name.toString().trim()),
+		description: _.escape(opts.description.toString().trim()),
 		public: !! opts.public,
 		updated: new Date(),
 	};
@@ -290,47 +331,59 @@ apiBlog.getMyPostDetail = (opts) => {
 			db.collection('blogs').findOne({_id: post._bId}, (e, r) => {
 				if (e) return reject(e);
 				post.blogName = r ? r.name : null;
+				post.description = _.unescape(post.description);
 				resolve(post);
 			});
 		});
-	})
+	});
+};
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-	let blog = null,
-		user = null;
+apiBlog.editMyPostDetail = (opts) => {
+	let user = null;
 	if (! opts._id) {
-		return Promise.reject(new Error('The blog not found'));
+		return Promise.reject(new Error('Post not found'));
 	}
-	opts._id = helper.mongoId(opts._id.toString());
+	if (! opts.name || ! opts.description || ! opts.status) {
+		return Promise.reject(new Error('Name and description are required'));
+	}
 
+	opts._id = helper.mongoId(opts._id.toString());
+	let setObj = {
+		status: opts.status.toString(),
+		name: _.escape(opts.name.toString().trim()),
+		description: _.escape(opts.description.toString().trim()),
+		updated: new Date(),
+	};
+	let q = {_id: opts._id};
 	return api.user.checkAuth(opts)
 	.then((u) => {
 		user = u;
 		return new Promise((resolve, reject) => {
-			db.collection('blogs').findOne({_id: opts._id, uId: user._id}, (e, r) => {
+			db.collection('posts').findOne(q, (e, r) => {
 				if (e) return reject(e);
-				if (! r) return reject(new Error('The blog not found'));
-				blog = r;
-				resolve(blog);
+				if (! r) return reject(new Error('Post not found'));
+
+				if (
+					setObj.name === r.name &&
+					setObj.description === r.description &&
+					setObj.status === r.status
+				) {
+					return reject(new Error('Nothing to edit'));
+				}
+				resolve();
 			});
 		});
 	})
+	.then(() => {
+		return new Promise((resolve, reject) => {
+			db.collection('posts').update(q, {$set: setObj}, (e) => {
+				if (e) return reject(e);
+				resolve();
+			});
+		});
+	});
 };
-
-
-
 
 
 

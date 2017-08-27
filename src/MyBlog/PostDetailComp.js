@@ -1,6 +1,16 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
+// Require Editor JS files.
+import 'froala-editor/js/froala_editor.pkgd.min.js';
+// Require Editor CSS files.
+import 'froala-editor/css/froala_style.min.css';
+import 'froala-editor/css/froala_editor.pkgd.min.css';
+// Require Font Awesome.
+import 'font-awesome/css/font-awesome.css';
+import FroalaEditor from 'react-froala-wysiwyg';
+
+
 import {api} from '../helpers/action'
 import {Alert} from '../helpers/component'
 
@@ -8,6 +18,7 @@ class PostDetailComp extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			_id: this.props.postDetail._id,
 			name: this.props.postDetail.name,
 			description: this.props.postDetail.description,
 			status: this.props.postDetail.status,
@@ -19,6 +30,11 @@ class PostDetailComp extends React.Component {
 		];
 	}
 	
+	froalaConfig = {
+		toolbarButtons: [
+			'fullscreen', 'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 'fontFamily', 'fontSize', 'color', '|', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', 'quote', '-', 'insertLink', 'insertTable', '|', 'emoticons', 'specialCharacters', 'insertHR', 'selectAll', 'clearFormatting', '|', 'help', 'html', '|', 'undo', 'redo'
+		],
+	}
 
 	fieldChange (e) {
 		let stateObj = {};
@@ -26,18 +42,22 @@ class PostDetailComp extends React.Component {
 		this.setState(stateObj);
 	}
 
+	handleModelChange (text) {
+		this.setState({
+			description: text,
+		});
+	}
+
 	formSubmit (e) {
 		e.preventDefault();
-
-
-		// this.props.dispatch(api({
-		// 	type: 'BLOG_EDIT',
-		// 	fetch: 'blog.editMyBlog',
-		// 	_id: this.props.blogDetail.blogId,
-		// 	public: this.state.public,
-		// 	name: this.state.name,
-		// 	description: this.state.description,
-		// }));
+		this.props.dispatch(api({
+			type: 'POST_EDIT',
+			fetch: 'blog.editMyPostDetail',
+			_id: this.state._id,
+			status: this.state.status,
+			name: this.state.name,
+			description: this.state.description,
+		}));
 	}
 
 	componentWillMount () {
@@ -49,29 +69,30 @@ class PostDetailComp extends React.Component {
 	}
 	componentWillReceiveProps (newProps) {
 		this.setState({
+			_id: newProps.postDetail._id,
 			name: newProps.postDetail.name,
 			description: newProps.postDetail.description,
 			status: newProps.postDetail.status,
 		});
-
-		// if (newProps.blogDetail.fetch_status === 'success_edit') {
-		// 	this.props.dispatch(api({
-		// 		type: 'POST_DETAIL',
-		// 		fetch: 'blog.getMyPostDetail',
-		// 		_id: this.props.postDetail.postId
-		// 	}));
-		// }
 	}
-	render () {		
+
+	render () {
 		let alertOpts = null,
 			blogLink = '/my-blog-detail/' + this.props.postDetail._bId;
 		
-		if (this.props.postDetail.fetch_status === 'error') {
+
+		if (
+			this.props.postDetail.fetch_status === 'error' ||
+			this.props.postDetail.fetch_status === 'error_edit'
+		) {
 			alertOpts = {
 				className: 'danger',
-				text: this.props.error
+				text: this.props.postDetail.fetch_error
 			}
-		} else if (this.props.postDetail.fetch_status === 'send') {
+		} else if (
+			this.props.postDetail.fetch_status === 'send' ||
+			this.props.postDetail.fetch_status === 'send_edit'
+		) {
 			alertOpts = {
 				className: 'info',
 				text: 'Loading, please wait',
@@ -119,13 +140,13 @@ class PostDetailComp extends React.Component {
 								/>
 							</div>
 							<div className="form-group">
-								<label htmlFor="exampleInputPassword1">Description</label>
-								<textarea 
-									className="form-control" 
-									id="description" 
-									placeholder="Description" 
-									onChange={::this.fieldChange} 
-									value={this.state.description}
+								<label htmlFor="description">Description</label>
+
+								<FroalaEditor 
+									tag='textarea'
+									model={this.state.description}
+									onModelChange={::this.handleModelChange}
+									config = {this.froalaConfig}
 								/>
 							</div>
 

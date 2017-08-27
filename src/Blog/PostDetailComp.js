@@ -1,5 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import DOMPurify from 'dompurify'
 
 import {api} from '../helpers/action'
 import {Alert} from '../helpers/component'
@@ -53,7 +54,9 @@ class PostDetailComp extends React.Component {
 					<p className='h4'>
 						{this.props.postDetail.name}
 					</p>
-					<p>{this.props.postDetail.description}</p>
+					<div
+						dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(this.props.postDetail.description)}}
+					></div>
 				</div>
 			</div>
 		</div>
