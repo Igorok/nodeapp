@@ -47,6 +47,7 @@ const config = new Promise ((resolve, reject) => {
 			my_post_detail: path.resolve(__dirname, 'src/my_post_detail.js'),
 
 			user_list: path.resolve(__dirname, 'src/user_list.js'),
+			chat_list: path.resolve(__dirname, 'src/chat_list.js'),
 		},
 		output: {
 			filename: '[name].js',

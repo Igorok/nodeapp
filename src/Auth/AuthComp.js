@@ -25,7 +25,7 @@ class AuthComp extends React.Component {
 		if (this.props.status === 'success') {
 			setTimeout(() => {
 				return window.location = '/';
-			}, 2000);
+			}, 1000);
 		}
 	}
 

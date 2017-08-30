@@ -78,8 +78,6 @@ let init = () => {
 				};
 				res.render('simple_view', opts);
 			});
-
-
 			router.get('/user-list', function(req, res, next) {
 				let opts = {
 					javascript: ['user_list'],
@@ -87,7 +85,13 @@ let init = () => {
 				};
 				res.render('simple_view', opts);
 			});
-
+			router.get('/chat-list', function(req, res, next) {
+				let opts = {
+					javascript: ['chat_list'],
+					title: 'Express'
+				};
+				res.render('simple_view', opts);
+			});
 
 
 
