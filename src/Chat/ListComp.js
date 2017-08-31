@@ -7,19 +7,32 @@ import {Alert} from '../helpers/component'
 
 class ChatItem extends React.Component {
 	render () {
+		let link = this.props.item.type === 'group' ? 
+			'/chat-group/' + this.props.item._id :
+			'/chat-personal/' + this.props.item._id;
+		let users = this.props.item.users.map((u) => {
+			let cName = 'label label-';
+			if (u.online) {
+				cName += 'success';
+			} else {
+				cName += 'default';
+			}
+			return <span key={u._id} >
+				<span className={cName}>{u.login}</span>&nbsp;
+			</span>
+		});
+
 		return <tr>
-			<td>
-				_id: {this.props.item._id}
-				type: {this.props.item.type}
-			</td>
-			
-			<td>
-				<button 
+			<td className='btn-td'>
+				<a 
 					className="btn btn-default" 
+					href={link}
 				>
 					<span className='glyphicon glyphicon-envelope'></span>
-				</button>
+				</a>
 			</td>
+			<td>{users}</td>
+			
 		</tr>
 	}
 }

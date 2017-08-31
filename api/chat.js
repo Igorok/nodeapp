@@ -35,10 +35,14 @@ apiChat.getChatList = (opts) => {
 		if (! chatArr.length) return;
 		
 		return new Promise ((resolve, reject) => {
-			db.collection('users').find({_id: {$in: userIds}}, {login: 1}).toArray((e, r) => {
+			db.collection('users').find({_id: {$in: userIds}}, {login: 1, dtActive: 1}).toArray((e, r) => {
 				if (e) return reject(e);
 				userById = r.reduce((obj, val) => {
-					obj[val._id] = val.login;
+					obj[val._id] = {
+						_id: val._id,
+						login: val.login,
+						online: api.user.checkOnline(val.dtActive),
+					};
 					return obj;
 				}, {});
 				resolve();
@@ -51,6 +55,7 @@ apiChat.getChatList = (opts) => {
 		chatArr = chatArr.map((val) => {
 			let item = {
 				type: val.type,
+				users: [],
 			};
 
 			if (val.type === 'personal') {
@@ -64,8 +69,13 @@ apiChat.getChatList = (opts) => {
 				item._id = val._id;
 			}
 
-			item.users = val.users.map((u) => {
-				return userById[u._id.toString()] ? userById[u._id.toString()] : '';
+			val.users.forEach((u) => {
+				if (
+					user._id.toString() !== u._id.toString() && 
+					userById[u._id.toString()]
+				) {
+					item.users.push(userById[u._id.toString()]);
+				}
 			});
 
 			return item;
