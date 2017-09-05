@@ -38,6 +38,7 @@ const config = new Promise ((resolve, reject) => {
 			login: path.resolve(__dirname, 'src/login.js'),
 			profile: path.resolve(__dirname, 'src/profile.js'),
 			about: path.resolve(__dirname, 'src/about.js'),
+			
 			blog_list: path.resolve(__dirname, 'src/blog_list.js'),
 			blog_detail: path.resolve(__dirname, 'src/blog_detail.js'),
 			post_detail: path.resolve(__dirname, 'src/post_detail.js'),
@@ -48,6 +49,7 @@ const config = new Promise ((resolve, reject) => {
 
 			user_list: path.resolve(__dirname, 'src/user_list.js'),
 			chat_list: path.resolve(__dirname, 'src/chat_list.js'),
+			chat_personal: path.resolve(__dirname, 'src/chat_personal.js'),
 		},
 		output: {
 			filename: '[name].js',

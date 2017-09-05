@@ -13,8 +13,8 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-
 let routeIndex = require(__dirname + '/../routes/index.js');
+let routeSocket = require(__dirname + '/../routes/socket.js');
 // var users = require('./routes/users');
 
 let helper = require(__dirname + '/helper.js');
@@ -74,7 +74,6 @@ helper.getConfig()
 		 * Get port from environment and store in Express.
 		 */
 		let port = process.env.PORT || cfg.app.port;
-		port = normalizePort(port);
 		app.set('port', port);
 
 		/**
@@ -91,26 +90,9 @@ helper.getConfig()
 		server.on('error', onError);
 		server.on('listening', onListening);
 
-		/**
-		 * Normalize a port into a number, string, or false.
-		 */
+		routeSocket(server);
 
-		function normalizePort(val) {
-			var port = parseInt(val, 10);
-
-			if (isNaN(port)) {
-				// named pipe
-				return val;
-			}
-
-			if (port >= 0) {
-				// port number
-				return port;
-			}
-
-			return false;
-		}
-
+		
 		/**
 		 * Event listener for HTTP server "error" event.
 		 */
