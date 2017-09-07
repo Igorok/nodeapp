@@ -395,7 +395,19 @@ apiUser.updateFriend = (opts) => {
 	});
 };
 
+apiUser.getUsersStatus = (opts) => {
+	let user = null;
+	
+	if (! opts.login || ! opts.email) {
+		return Promise.reject(new Error('Login and email are required'));
+	}
 
+	opts.login = opts.login.toString().trim();
+	opts.email = opts.email.toString().trim();
+
+
+	return apiUser.checkAuth(opts)
+}
 
 
 

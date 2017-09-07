@@ -12,7 +12,7 @@ let init = (server) => {
 			io = io.listen(server);
 
 			io.use((socket, next) => {
-				var emitError = (err) => {
+				let emitError = (err) => {
 					console.trace(err);
 					return socket.emit('err', err);
 				};
@@ -22,13 +22,31 @@ let init = (server) => {
 				});
 
 				socket.on('joinPers', (param) => {
-					console.log('joinPers ', param);
+					let room = null;
+					api.chat.joinPersonal(param)
+					.then((r) => {
+						room = r;
+						return new Promise((resolve, reject) => {
+							socket.join(room.roomId, (e) => {
+								if (e) return reject(e);
+								resolve();
+							});
+						});
+					})
+					.then(() => {
+						console.log('emit');
 
-					socket.emit('joinPers', {
-						_id: param._id,
-						users: ['user 1', 'user 2'],
-						messages: ['message 1', 'message 2', 'message 3'],
+						socket.to(room.roomId).emit('freshStatus', {roomId: room.roomId, users: room.users});
+						socket.emit('joinPers', room);
+						return;
+					})
+					.catch((e) => {
+						console.log('catch ', e);
+
+						emitError(e);
 					});
+
+
 				});
 
 

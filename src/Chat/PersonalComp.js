@@ -9,9 +9,7 @@ import {joinPers} from './PersonalAct'
 class ChatPersComp extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {
-			color: props.initialColor
-		};
+		
 		this.io = client(window.location.host);
 
 		this.io.on('joinPers', (r) => {
@@ -27,7 +25,11 @@ class ChatPersComp extends React.Component {
 		// }));
 
 		console.log('this.props ', this.props);
-		this.io.emit('joinPers', {_id: this.props._id});
+		let p = {
+			token: this.props.auth.token,
+			userId: this.props.chatPersonal.userId,
+		}
+		this.io.emit('joinPers', p);
 	}
 
 	render () {
@@ -36,14 +38,14 @@ class ChatPersComp extends React.Component {
 			messages = null;
 	
 		if (
-			this.props.fetch_status === 'error'
+			this.props.chatPersonal.fetch_status === 'error'
 		) {
 			alertOpts = {
 				className: 'danger',
-				text: this.props.fetch_error
+				text: this.props.chatPersonal.fetch_error
 			}
 		} else if (
-			this.props.fetch_status === 'send'
+			this.props.chatPersonal.fetch_status === 'send'
 		) {
 			alertOpts = {
 				className: 'info',
@@ -52,15 +54,15 @@ class ChatPersComp extends React.Component {
 		}
 
 
-		if (this.props.users.length) {
+		if (this.props.chatPersonal.users.length) {
 			let i = 0;
-			users = this.props.users.map((val) => {
+			users = this.props.chatPersonal.users.map((val) => {
 				return <span key={i++}>{val}</span>
 			});
 		}
-		if (this.props.messages.length) {
+		if (this.props.chatPersonal.messages.length) {
 			let i = 0;
-			messages = this.props.messages.map((val) => {
+			messages = this.props.chatPersonal.messages.map((val) => {
 				return <p key={i++}>{val}</p>
 			});
 		}
@@ -79,7 +81,7 @@ class ChatPersComp extends React.Component {
 	}
 }
 const mapStateToProps = (state) => {
-	return {...state.chatPersonal}
+	return {...state}
 }
 ChatPersComp = connect(mapStateToProps)(ChatPersComp)
 

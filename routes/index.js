@@ -92,10 +92,10 @@ let init = () => {
 				};
 				res.render('simple_view', opts);
 			});
-			router.get('/chat-personal/:chatId', function(req, res, next) {
+			router.get('/chat-personal/:userId', function(req, res, next) {
 				let opts = {
 					javascript: ['chat_personal'],
-					variables: {chatId: req.params.chatId ? req.params.chatId.toString() : null},
+					variables: {userId: req.params.userId ? req.params.userId.toString() : null},
 					title: 'Express'
 				};
 				res.render('simple_view', opts);
