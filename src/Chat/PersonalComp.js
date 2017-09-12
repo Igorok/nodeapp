@@ -1,10 +1,12 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import {Alert} from '../helpers/component'
-
 import client from 'socket.io-client'
 
+import {Alert} from '../helpers/component'
 import {joinPers} from './PersonalAct'
+import UserListComp from './UserListComp'
+import MsgListComp from './MsgListComp'
+import MsgFormComp from './MsgFormComp'
 
 class ChatPersComp extends React.Component {
 	constructor(props) {
@@ -16,15 +18,13 @@ class ChatPersComp extends React.Component {
 			console.log('joinPers ', r);
 			this.props.dispatch(joinPers(r));
 		});
+
+		this.io.on('err', (e) => {
+			console.log('err ', e);
+		});
 	}
 
 	componentWillMount () {
-		// this.props.dispatch(api({
-		// 	type: 'CHAT_LIST',
-		// 	fetch: 'chat.getChatList',
-		// }));
-
-		console.log('this.props ', this.props);
 		let p = {
 			token: this.props.auth.token,
 			userId: this.props.chatPersonal.userId,
@@ -53,29 +53,13 @@ class ChatPersComp extends React.Component {
 			}
 		}
 
-
-		if (this.props.chatPersonal.users.length) {
-			let i = 0;
-			users = this.props.chatPersonal.users.map((val) => {
-				return <span key={i++}>{val}</span>
-			});
-		}
-		if (this.props.chatPersonal.messages.length) {
-			let i = 0;
-			messages = this.props.chatPersonal.messages.map((val) => {
-				return <p key={i++}>{val}</p>
-			});
-		}
-
-		console.log('render ', this.props);
-
 		// col-md-4
 		return <div>
 			<Alert opts={alertOpts} />
-			qwe
-			<div>{users}</div>
-			<div>{messages}</div>
-
+			<UserListComp users={this.props.chatPersonal.users} />
+			<br />
+			<MsgListComp messages={this.props.chatPersonal.messages} />
+			<MsgFormComp />
 		</div>
 		
 	}

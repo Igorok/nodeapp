@@ -133,7 +133,7 @@ let init = () => {
 						if (e.message) e = e.message;
 						let status = 500;
 						if (e === 403) status = 403;
-						console.trace('rout error', e);
+						console.trace('error', a, f, e);
 
 						 res.status(status).json(e);
 					});

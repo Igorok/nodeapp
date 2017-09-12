@@ -52,8 +52,8 @@ apiChat.getChatList = (opts) => {
 	})
 	.then(() => {
 		if (! chatArr.length) return;
-
-		chatArr = chatArr.map((val) => {
+		var r = [];
+		_.forEach(chatArr, (val) => {
 			let item = {
 				type: val.type,
 				users: [],
@@ -61,6 +61,9 @@ apiChat.getChatList = (opts) => {
 
 			if (val.type === 'personal') {
 				_.forEach(val.users, (u) => {
+					if (! u || ! u._id) {
+						return;
+					}
 					if (user._id.toString() != u._id.toString()) {
 						item._id = u._id;
 						return false;
@@ -69,6 +72,7 @@ apiChat.getChatList = (opts) => {
 			} else {
 				item._id = val._id;
 			}
+			if (! item._id) return;
 
 			val.users.forEach((u) => {
 				if (
@@ -79,10 +83,10 @@ apiChat.getChatList = (opts) => {
 				}
 			});
 
-			return item;
+			r.push(item);
 		});
 
-		return chatArr;
+		return r;
 	});
 };
 
@@ -175,7 +179,7 @@ apiChat.joinPersonal = (opts) => {
 
 				result.messages = _.map(r, (msg) => {
 					msg.login = loginById[msg.uId];
-					msg.fDate = moment(msg.date).format('YYYY-MM-DD HH:mm');
+					msg.fDate = moment(msg.date).calendar();
 					return msg
 				});
 
