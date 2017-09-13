@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import client from 'socket.io-client'
 
 import {Alert} from '../helpers/component'
-import {joinPers} from './PersonalAct'
+import {joinPers, joinErr} from './PersonalAct'
 import UserListComp from './UserListComp'
 import MsgListComp from './MsgListComp'
 import MsgFormComp from './MsgFormComp'
@@ -15,12 +15,17 @@ class ChatPersComp extends React.Component {
 		this.io = client(window.location.host);
 
 		this.io.on('joinPers', (r) => {
-			console.log('joinPers ', r);
 			this.props.dispatch(joinPers(r));
 		});
 
 		this.io.on('err', (e) => {
-			console.log('err ', e);
+			if (e && e.toString() === '403') {
+				localStorage.removeItem('user');
+				return window.location = '/login'
+			}
+			this.props.dispatch(joinErr({
+				error: e,
+			}));
 		});
 	}
 
@@ -52,6 +57,8 @@ class ChatPersComp extends React.Component {
 				text: 'Loading, please wait',
 			}
 		}
+
+		console.log('alertOpts ', alertOpts);
 
 		// col-md-4
 		return <div>

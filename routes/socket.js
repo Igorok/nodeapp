@@ -12,9 +12,11 @@ let init = (server) => {
 			io = io.listen(server);
 
 			io.use((socket, next) => {
-				let emitError = (err) => {
-					console.trace(err);
-					return socket.emit('err', err);
+				let emitError = (e) => {
+					console.trace('socket ', e);
+					if (e.message) e = e.message;
+					socket.emit('err', e);
+					return;
 				};
 
 				socket.on('connection', (socket) => {
@@ -34,16 +36,17 @@ let init = (server) => {
 						});
 					})
 					.then(() => {
-						console.log('emit');
-
-						socket.to(room.roomId).emit('freshStatus', {roomId: room.roomId, users: room.users});
+						// to room
+						socket.to(room.roomId).emit('freshStatus', {
+							roomId: room.roomId, 
+							users: room.users
+						});
+						// to user
 						socket.emit('joinPers', room);
 						return;
 					})
 					.catch((e) => {
-						console.log('catch ', e);
-
-						emitError(e);
+						return emitError(e);
 					});
 
 

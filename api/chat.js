@@ -105,9 +105,19 @@ apiChat.joinPersonal = (opts) => {
 		};
 
 	return api.user.checkAuth(opts)
-	// get chat group
 	.then((u) => {
 		user = u;
+		return new Promise ((resolve, reject) => {
+			let secId = helper.mongoId(opts.userId);
+			db.collection('users').findOne({_id: secId}, (e, r) => {
+				if (e) return reject(e);
+				if (! r) return reject(new Error('User not found!'));
+				resolve();
+			});
+		});
+	})
+	// get chat group
+	.then(() => {
 		let q = {
 			type: 'personal',
 			$and: [

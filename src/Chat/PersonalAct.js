@@ -10,3 +10,12 @@ export const joinPers = (opts) => {
 		});
 	}
 };
+
+export const joinErr = (opts) => {
+	return (dispatch) => {
+		dispatch({
+			type: 'JOIN_PERS_ERROR',
+			error: opts.error,
+		});
+	}
+};
