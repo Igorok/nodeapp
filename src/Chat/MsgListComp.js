@@ -1,4 +1,5 @@
 import React from 'react'
+import ReactDOM from 'react-dom'
 import 'jquery';
 
 class MsgItemComp extends React.Component {
@@ -23,19 +24,33 @@ class MsgListComp extends React.Component {
                 height: $(window).height() - 120,
             });
         });
-        
     }
+    scrollBottom () {
+        let h = $('.msg-table').height();
+        $('.msg-case').scrollTop(h);
+    }
+    componentDidMount() {
+        this.scrollBottom();
+    }
+    componentDidUpdate() {
+        this.scrollBottom();
+    }
+
     render () {
         let msgList = this.props.messages.map((val) => {
-            return <MsgItemComp msg={val} key={val._id}/>
+            return <MsgItemComp 
+                msg={val} 
+                key={val._id}
+            />
         });
         let style = {
             height: this.state.height + 'px',
-            overflowY: 'scroll',
         };
-        return <div style={style}>
-            <table className="table table-hover">
-                <tbody>{msgList}</tbody>
+        return <div style={style} className='msg-case'>
+            <table className="table table-hover msg-table" >
+                <tbody>
+                    {msgList}
+                </tbody>
             </table>
         </div>
     }

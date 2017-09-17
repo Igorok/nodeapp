@@ -182,9 +182,12 @@ apiChat.joinPersonal = (opts) => {
 	.then(() => {
 		return new Promise ((resolve, reject) => {
 			let q = {
-				rId: chatGr._id
+				rId: chatGr._id,
+				date: {
+					$gte: moment().subtract(10, 'days').toDate()
+				}
 			};
-			db.collection('chatmessages').find(q, {limit: 100}).toArray((e, r) => {
+			db.collection('chatmessages').find(q, {sort: {date: 1}, limit: 100}).toArray((e, r) => {
 				if (e) return reject(e);
 
 				result.messages = _.map(r, (msg) => {
@@ -196,6 +199,56 @@ apiChat.joinPersonal = (opts) => {
 				resolve(result);
 			});
 		});
+	});
+};
+
+apiChat.message = function (opts, cb) {
+	if (! opts.rId) {
+		return Promise.reject(new Error('Wrong data'));
+	}
+	if (! opts.msg || ! opts.msg.toString().length) {
+		return Promise.resolve();
+	}
+
+	opts.rId = helper.mongoId(opts.rId);
+	var user = null,
+		msg = null;
+
+	return api.user.checkAuth(opts)
+	.then((u) => {
+		user = u;
+		// check room and access of user
+		var q = {
+			_id: opts.rId,
+			'users._id': user._id,
+		};
+		return new Promise ((resolve, reject) => {
+			db.collection('chatgroups').findOne(q, (e, r) => {
+				if (e) return reject(e);
+				if (! r) return reject(new Error('Chat not found'));
+				resolve();
+			});
+		});
+	})
+	.then(() => {
+		var insObj = {
+			uId: helper.mongoId(user._id),
+			rId: opts.rId,
+			msg: _.escape(opts.msg),
+			date: new Date(),
+		};
+		return new Promise ((resolve, reject) => {
+			db.collection('chatmessages').insertOne(insObj, (e, r) => {
+				if (e) return reject(e);
+				msg = r.ops[0];
+				resolve();
+			});
+		});
+	})
+	.then(() => {
+		msg.login = user.login;
+		msg.fDate = moment(msg.date).calendar();
+		return msg;
 	});
 };
 

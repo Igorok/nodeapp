@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import client from 'socket.io-client'
 
 import {Alert} from '../helpers/component'
-import {joinPers, joinErr} from './PersonalAct'
+import {joinPers, err, message} from './PersonalAct'
 import UserListComp from './UserListComp'
 import MsgListComp from './MsgListComp'
 import MsgFormComp from './MsgFormComp'
@@ -18,17 +18,29 @@ class ChatPersComp extends React.Component {
 			this.props.dispatch(joinPers(r));
 		});
 
+		this.io.on('message', (r) => {
+			this.props.dispatch(message(r));
+		});
+
 		this.io.on('err', (e) => {
 			if (e && e.toString() === '403') {
 				localStorage.removeItem('user');
 				return window.location = '/login'
 			}
-			this.props.dispatch(joinErr({
+			this.props.dispatch(err({
 				error: e,
 			}));
 		});
 	}
-
+	emitMessage (msg) {		
+		let p = {
+			token: this.props.auth.token,
+			uId: this.props.chatPersonal.userId,
+			rId: this.props.chatPersonal.roomId,
+			msg: msg,
+		}
+		this.io.emit('message', p);
+	}
 	componentWillMount () {
 		let p = {
 			token: this.props.auth.token,
@@ -58,7 +70,6 @@ class ChatPersComp extends React.Component {
 			}
 		}
 
-		console.log('alertOpts ', alertOpts);
 
 		// col-md-4
 		return <div>
@@ -66,7 +77,7 @@ class ChatPersComp extends React.Component {
 			<UserListComp users={this.props.chatPersonal.users} />
 			<br />
 			<MsgListComp messages={this.props.chatPersonal.messages} />
-			<MsgFormComp />
+			<MsgFormComp emitMessage={::this.emitMessage} />
 		</div>
 		
 	}
