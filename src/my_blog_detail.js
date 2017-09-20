@@ -28,7 +28,7 @@ let store = createStore(
 	)
 );
 
-let Comp = layout(BlogDetailComp);
+let Comp = layout(BlogDetailComp, true);
 render(
 	<Provider store={store}>
 		<Comp />

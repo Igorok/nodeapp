@@ -18,7 +18,7 @@ let store = configureStore({
 	profile: profile,
 });
 
-let Comp = layout(ProfileComp);
+let Comp = layout(ProfileComp, true);
 render(
 	<Provider store={store}>
 		<Comp />

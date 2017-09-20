@@ -7,6 +7,25 @@ let cfg = null,
 	apiBlog = {},
 	api = {};
 
+// validation start
+
+
+
+// validation end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 apiBlog.getBlogList = (opts) => {
 	let blogArr = [],
 		userArr = [];

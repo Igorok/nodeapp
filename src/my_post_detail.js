@@ -26,7 +26,7 @@ let store = createStore(
 	)
 );
 
-let Comp = layout(PostDetailComp);
+let Comp = layout(PostDetailComp, true);
 render(
 	<Provider store={store}>
 		<Comp />

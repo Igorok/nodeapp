@@ -31,9 +31,13 @@ export class SideNav extends React.Component {
 		let userItem = null;
 		let chatItem = null;
 
-		if (this.props.isAuthenticated) {
+		if (this.props.auth.isAuthenticated) {
 			profileItem = <li role="presentation">
-				<a href="/profile"><span className="glyphicon glyphicon-home"></span>&nbsp;&nbsp;Profile</a>
+				<a href="/profile">
+					<span className="glyphicon glyphicon-home"></span>
+					&nbsp;&nbsp;Profile
+					({this.props.auth.login})
+				</a>
 			</li>
 			userItem = <li role="presentation">
 				<a href="/user-list"><span className="glyphicon glyphicon-user"></span>&nbsp;&nbsp;Users</a>
@@ -74,16 +78,15 @@ export function layout (Component, forAuthenticated = false) {
 		checkAuth(auth) {
 			// if this page only for authenticated users and the storage has no isAuthenticated
 			if (forAuthenticated && ! auth.isAuthenticated) {
-				// this.props.dispatch(push('/login'));
+				return window.location = '/';
 			}
 		}
 		render() {
-			let isAuthenticated = this.props.auth.isAuthenticated;
 			return (
 				<div>
 					<div className="row">
 						<div className="col-md-2">
-							<SideNav isAuthenticated={isAuthenticated}/>
+							<SideNav auth={this.props.auth}/>
 						</div>
 						<div className="col-md-10">
 							<Component />

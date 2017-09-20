@@ -5,9 +5,9 @@ import 'jquery';
 class MsgItemComp extends React.Component {
     render () {
         return <tr>
-            <td>{this.props.msg.login}</td>
+            <td className='td-date'>{this.props.msg.login}</td>
             <td>{this.props.msg.msg}</td>
-            <td>{this.props.msg.fDate}</td>
+            <td className='td-date'>{this.props.msg.fDate}</td>
         </tr>
     }
 }

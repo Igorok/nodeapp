@@ -50,12 +50,12 @@ class UserListItem extends React.Component {
 			<td>{this.getLabel(this.props.item.online)}</td>
 			<td>{this.getFrButton(this.props.item._id, this.props.item.friend)}</td>
 			<td>
-				<button 
-					className="btn btn-default" 
-					data-id={this.props.item._id}
+				<a 
+					className="btn btn-default"
+					href={'/chat-personal/' + this.props.item._id}
 				>
 					<span className='glyphicon glyphicon-envelope'></span>
-				</button>
+				</a>
 			</td>
 		</tr>
 	}
