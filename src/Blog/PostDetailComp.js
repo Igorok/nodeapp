@@ -20,7 +20,7 @@ class PostDetailComp extends React.Component {
 		if (this.props.postDetail.status === 'error') {
 			alertOpts = {
 				className: 'danger',
-				text: this.props.error
+				text: this.props.postDetail.error
 			}
 		} else if (this.props.postDetail.status === 'send') {
 			alertOpts = {

@@ -113,24 +113,33 @@ apiBlog.getBlogPosts = (opts) => {
 	opts._id = helper.mongoId(opts._id.toString());
 
 	return new Promise((resolve, reject) => {
-		let q = {
-			_bId: opts._id,
-			approved: 1,
-			status: "publish",
-		};
-		let rows = {
-			_id: 1,
-			name: 1,
-			description: 1,
-			uId: 1,
-			created: 1,
-		};
-		db.collection('posts').find(q, rows).toArray((e, r) => {
+		db.collection('blogs').findOne({_id: opts._id, public: true}, (e, r) => {
 			if (e) return reject(e);
-			if (r && r.length) {
-				posts = r;
-			}
+			if (! r) return reject(new Error('The blog not found'));
 			resolve();
+		});
+	})
+	.then(() => {
+		return new Promise((resolve, reject) => {
+			let q = {
+				_bId: opts._id,
+				approved: 1,
+				status: "publish",
+			};
+			let rows = {
+				_id: 1,
+				name: 1,
+				description: 1,
+				uId: 1,
+				created: 1,
+			};
+			db.collection('posts').find(q, rows).toArray((e, r) => {
+				if (e) return reject(e);
+				if (r && r.length) {
+					posts = r;
+				}
+				resolve();
+			});
 		});
 	})
 	.then(() => {
@@ -180,10 +189,19 @@ apiBlog.getPostDetail = (opts) => {
 
 		db.collection('posts').findOne(q, (e, r) => {
 			if (e) return reject(e);
-			if (! r) return reject(new Error('The blog not found'));
+			if (! r) return reject(new Error('The post not found'));
 			post = r;
 			resolve();
 		});
+	})
+	.then(() => {
+		return new Promise((resolve, reject) => {
+			db.collection('blogs').findOne({_id: post._bId, public: true}, (e, r) => {
+				if (e) return reject(e);
+				if (! r) return reject(new Error('The blog not found'));
+				resolve();
+			});
+		})
 	})
 	.then(() => {
 		return new Promise((resolve, reject) => {

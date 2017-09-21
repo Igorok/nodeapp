@@ -16,7 +16,7 @@ const postList = (state = initState, action) => {
 			state.list = action.data;
 			state.status = 'success';
 			return state;
-		case 'POST_LIST_EROR':
+		case 'POST_LIST_ERROR':
 			state = {...state};
 			state.status = 'error';
 			state.error = action.error;

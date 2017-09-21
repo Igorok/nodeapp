@@ -37,7 +37,7 @@ const postDetail = (state = initState, action) => {
 			state.description = action.data.description;
 			state.status = 'success';
 			return state;
-		case 'POST_DETAIL_EROR':
+		case 'POST_DETAIL_ERROR':
 			state = {...state};
 			state.status = 'error';
 			state.error = action.error;
