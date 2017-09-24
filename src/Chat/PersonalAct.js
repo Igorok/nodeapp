@@ -1,6 +1,3 @@
-
-
-// window.location.hostname
 export const joinPers = (opts) => {
 	return (dispatch) => {
 		dispatch({

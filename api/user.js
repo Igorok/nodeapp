@@ -395,6 +395,41 @@ apiUser.updateFriend = (opts) => {
 	});
 };
 
+apiUser.getFriendList = (opts) => {
+	let user = null,
+		fArr = [];
+
+	return apiUser.checkAuth(opts)
+	.then((u) => {
+		return new Promise((resolve, reject) => {
+			user = u;
+			let fIds = _.map(user.friends, (v) => {
+				return v._id;
+			});
+			let q = {
+				_id: {$in: fIds},
+				'friends._id': user._id,
+				status: 1,
+			};
+			let rows = {
+				login: 1, 
+				dtActive: 1,
+			};
+
+			db.collection('users').find(q, rows).toArray((e, r) => {
+				if (e) return reject(e);
+				fArr = _.map(r, (u) => {
+					u.online = apiUser.checkOnline(u.dtActive);
+					return u;
+				});
+				resolve(fArr);
+			});
+		});
+	});
+};
+
+
+
 apiUser.getUsersStatus = (opts) => {
 	let user = null;
 	
