@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import {api} from '../helpers/action'
 import {Alert} from '../helpers/component'
 
+import UserLoginComp from './UserLoginComp'
 
 
 class UserListItem extends React.Component {
@@ -42,12 +43,7 @@ class UserListItem extends React.Component {
 	}
 	render () {
 		return <tr>
-			<td>
-				<a href = {"/user-detail/" + this.props.item._id}>
-					{this.props.item.login}
-				</a>
-			</td>
-			<td>{this.getLabel(this.props.item.online)}</td>
+			<td><UserLoginComp users={[this.props.item]}/></td>
 			<td>{this.getFrButton(this.props.item._id, this.props.item.friend)}</td>
 			<td>
 				<a 

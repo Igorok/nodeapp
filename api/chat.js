@@ -71,6 +71,7 @@ apiChat.getChatList = (opts) => {
 				});
 			} else {
 				item._id = val._id;
+				item.creator = (user._id.toString() === val.creator.toString())
 			}
 			if (! item._id) return;
 

@@ -6,10 +6,10 @@ import 'bootstrap/dist/css/bootstrap.css';
 import './styles/index.scss'
 
 import {layout} from './helpers/component'
-import PersonalComp from './Chat/PersonalComp'
+import PersonalComp from './Chat/components/PersonalComp'
 
 import auth from './Auth/AuthRed'
-import chatPersonal from './Chat/PersonalRed'
+import chatPersonal from './Chat/reducers/PersonalRed'
 
 import {configureStore} from './helpers/configureStore'
 

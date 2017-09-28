@@ -2,9 +2,9 @@ import React from 'react'
 import { connect } from 'react-redux'
 import client from 'socket.io-client'
 
-import {Alert} from '../helpers/component'
-import {joinPers, err, message} from './PersonalAct'
-import UserListComp from './UserListComp'
+import {Alert} from '../../helpers/component'
+import {joinPers, err, message} from '../PersonalAct'
+import UserLoginComp from '../../User/UserLoginComp'
 import MsgListComp from './MsgListComp'
 import MsgFormComp from './MsgFormComp'
 
@@ -74,7 +74,7 @@ class ChatPersComp extends React.Component {
 		// col-md-4
 		return <div>
 			<Alert opts={alertOpts} />
-			<UserListComp users={this.props.chatPersonal.users} />
+			<UserLoginComp users={this.props.chatPersonal.users} />
 			<br />
 			<MsgListComp messages={this.props.chatPersonal.messages} />
 			<MsgFormComp emitMessage={::this.emitMessage} />

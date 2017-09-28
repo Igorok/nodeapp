@@ -6,7 +6,7 @@ class UserItemComp extends React.Component {
         if (this.props.user.online) {
             cName += 'success';
         } else {
-            cName += 'danger';
+            cName += 'default';
         }
 
         return <span><span className={cName}>
