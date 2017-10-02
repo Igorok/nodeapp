@@ -253,6 +253,133 @@ apiChat.message = function (opts, cb) {
 	});
 };
 
+
+apiChat.addChatGroup = (opts, cb) => {
+	if (! opts.users.length || ! opts.users.length) {
+		return Promise.reject(new Error('Wrong data'));
+	}
+	
+	let groupObj = null,
+		user = null;
+	return api.user.checkAuth(opts)
+	.then((u) => {
+		user = u;
+		opts.users.push(user._id);
+		opts.users = _.map(opts.users, (_id) => {
+			return {
+				_id: helper.mongoId(_id)
+			};
+		});
+		
+		let groupObj = {
+			users: opts.users,
+			creator: user._id,
+			cDate: new Date(),
+			type: 'group',
+		};
+
+		return new Promise ((resolve, reject) => {
+			db.collection('chatgroups').insertOne(groupObj, (e, r) => {
+				if (e) return reject(e);
+				groupObj = r.ops[0];
+				resolve();
+			});
+		});
+	})
+	.then(() => {
+		let q = {
+			_id: {$in: _.map(groupObj.users, (v) => {
+				return v._id
+			})}
+		};
+
+		return new Promise ((resolve, reject) => {
+			db.collection('users').find(q, {login: 1, dtActive: 1}).toArray((e, r) => {
+				if (e) return reject(e);
+				let users = [];
+				_.forEach(r, (v) => {
+					if (v._id.toString() !== user._id.toString()) {
+						users.push({
+							_id: v._id,
+							login: v.login,
+							online: api.user.checkOnline(v.dtActive),
+						})
+					}
+				});
+				groupObj.users = users;
+				resolve(groupObj);
+			});
+		});
+	});
+}
+
+apiChat.editChatGroup = (opts, cb) => {
+	if (! opts._id || ! opts.users.length || ! opts.users.length) {
+		return Promise.reject(new Error('Wrong data'));
+	}
+
+	opts._id = helper.mongoId(opts._id);
+	let user = null,
+		groupObj = null;
+
+	return api.user.checkAuth(opts)
+	.then((u) => {
+		user = u;
+		return new Promise ((resolve, reject) => {
+			let q = {
+				_id: opts._id,
+				creator: user._id,
+			};
+			db.collection('chatgroups').findOne(q, (e, r) => {
+				if (e) return reject(e);
+				if (! r) return reject(new Error('Chat group not found!'));
+				groupObj = r;
+				resolve();
+			});
+		});
+	})
+	.then(() => {
+		opts.users.push(user._id);
+		groupObj.users = _.map(opts.users, (_id) => {
+			return {
+				_id: helper.mongoId(_id)
+			};
+		});
+		return new Promise ((resolve, reject) => {
+			db.collection('chatgroups').updateOne({_id: groupObj._id}, {$set: {users: groupObj.users}}, (e, r) => {
+				if (e) return reject(e);
+				resolve();
+			});
+		});
+	})
+	.then(() => {
+		let q = {
+			_id: {$in: _.map(groupObj.users, (v) => {
+				return v._id
+			})}
+		};
+
+		return new Promise ((resolve, reject) => {
+			db.collection('users').find(q, {login: 1, dtActive: 1}).toArray((e, r) => {
+				if (e) return reject(e);
+				let users = [];
+				_.forEach(r, (v) => {
+					if (v._id.toString() !== user._id.toString()) {
+						users.push({
+							_id: v._id,
+							login: v.login,
+							online: api.user.checkOnline(v.dtActive),
+						})
+					}
+				});
+				groupObj.users = users;
+				resolve(groupObj);
+			});
+		});
+	});
+}
+
+
 let init = () => {
 	return helper.getConfig()
 	.then((r) => {

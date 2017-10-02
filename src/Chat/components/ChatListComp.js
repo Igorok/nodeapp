@@ -1,28 +1,41 @@
 import _ from 'lodash'
 import React from 'react'
 import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import Select from 'react-select';
+
 import {api} from '../../helpers/action'
 import {Alert} from '../../helpers/component'
 
-import Select from 'react-select';
 
 import UserLoginComp from '../../User/UserLoginComp'
 
+const groupChange = (opts) => {
+	let prop = {
+		_id: opts._id,
+		users: opts.users,
+	}
+	if (opts._id.toString() == '-1') {
+		prop.type = 'GROUP_ADD';
+		prop.fetch = 'chat.addChatGroup';
+	} else {
+		prop.type = 'GROUP_EDIT';
+		prop.fetch = 'chat.editChatGroup';
+	}
 
+	console.log('prop ', prop);
+	api(prop);
+}
 
-class ChatItem extends React.Component {
+class GroupForm extends React.Component {
 	constructor(props) {
 		super(props);
 
-		console.log('ChatItem ', this.props.friendList.list);
-
 		this.state = {
+			edit: false,
 			value: [],
 			options: [],
 		};
-
-
-		console.log(1, this.props.friendList.list);
 	}
 	componentWillReceiveProps (newProps) {
 		this.state = {
@@ -30,78 +43,110 @@ class ChatItem extends React.Component {
 				return {
 					value: v._id,
 					label: v.login,
-				}
+				};
 			}),
-			value: _.map(newProps.item.users, (v) => {
+			value: _.map(newProps.users, (v) => {
 				return {
 					value: v._id,
 					label: v.login,
-				}
+				};
 			}),
 		};
 	}
-
-	/*
-	componentWillMount () {
-		this.state = {
-			value: _.map(this.props.friendList.list, (v) => {
-				return {
-					value: v._id,
-					label: v.login,
-				}
-			}),
-		};
-	}
-	componentWillReceiveProps (newProps) {
-		this.state = {
-			value: _.map(newProps.friendList.list, (v) => {
-				return {
-					value: v._id,
-					label: v.login,
-				}
-			}),
-		};
-	}
-	*/
-	logChange (value) {
+	// set state
+	chatChange (value) {
 		this.setState({ value });
 	}
+	// submit chat group form
+	chatSave (e) {
+		e.preventDefault();
+		var opts = {
+			_id: this.props._id,
+			users: _.map(this.state.value, (v) => {
+				return v.value
+			}),
+
+		};
+		console.log('opts ', opts);
+		this.props.groupUpdate(opts)
+	}
+
 
 	render () {
-		let link = this.props.item.type === 'group' ? 
-			'/chat-group/' + this.props.item._id :
-			'/chat-personal/' + this.props.item._id;
-
-		console.log(2, this.props.friendList.list);
-		var options = _.map(this.props.friendList.list, (v) => {
-			return {
-				value: v._id,
-				label: v.login,
-			}
-		});
-
-		return <tr>
-			<td>
-				<UserLoginComp users={this.props.item.users} />
-				<br />
+		return <div className='row'>	
+			<div className='col-xs-10'>
 				<Select
 					name = "form-field-name"
 					value = "one"
 					multi = {true}
 					options = {this.state.options}
-					onChange = {::this.logChange}
+					onChange = {::this.chatChange}
 					value={this.state.value}
 				/>
+			</div>
+			<div className='col-xs-2'>
+				<button className='btn btn-success' onClick={::this.chatSave}>
+					<span className='glyphicon glyphicon-ok'></span>
+				</button>
+			</div>
+		</div>
+	}
+}
+class ChatItem extends React.Component {
+	constructor(props) {
+		super(props);
 
+		this.state = {
+			edit: false,
+		};
+	}
+	// show/hide form
+	chatEdit (e) {
+		e.preventDefault();
+		this.setState({
+			edit: ! this.state.edit,
+		});
+	}
+	render () {
+		let editBtn = null,
+			select = null;
+		let link = this.props.item.type === 'group' ? 
+			'/chat-group/' + this.props.item._id :
+			'/chat-personal/' + this.props.item._id;
+
+		if (this.props.item.type === 'group' && this.props.item.creator) {
+			editBtn = <button 
+					className='btn btn-default'
+					onClick={::this.chatEdit}
+				>
+					<span className='glyphicon glyphicon-cog'></span>
+				</button>
+			
+			select = <div className={! this.state.edit ? 'hidden' : ''}>
+					<GroupForm 
+						friendList = {this.props.friendList}
+						users = {this.props.item.users}
+						_id = {this.props.item._id}
+						groupUpdate = {this.props.groupUpdate}
+					/>
+				</div>
+		}
+
+		return <tr>
+			<td>
+				<div 
+					className={this.state.edit ? 'hidden' : ''}
+				>
+					<UserLoginComp users={this.props.item.users} />
+				</div>
+				{select}
 			</td>
 			<td className='chat-btn-td'>
 				<a href={link} className='btn btn-default'>
 					<span className='glyphicon glyphicon-envelope'></span>
 				</a>
 				&nbsp;
-				<button className='btn btn-default'>
-					<span className='glyphicon glyphicon-cog'></span>
-				</button>
+				{editBtn}
 				&nbsp;
 				<button className='btn btn-default'>
 					<span className='glyphicon glyphicon-trash'></span>
@@ -123,7 +168,21 @@ class ChatListComp extends React.Component {
 			fetch: 'user.getFriendList',
 		}));
 	}
-
+	groupUpdate (opts) {
+		let prop = {
+			_id: opts._id,
+			users: opts.users,
+		}
+		if (opts._id.toString() == '-1') {
+			prop.type = 'GROUP_ADD';
+			prop.fetch = 'chat.addChatGroup';
+		} else {
+			prop.type = 'GROUP_EDIT';
+			prop.fetch = 'chat.editChatGroup';
+		}
+		
+		this.props.dispatch(api(prop));
+	}
 	render () {
 		let alertOpts = null,
 			chats = null;
@@ -149,14 +208,12 @@ class ChatListComp extends React.Component {
 				return <ChatItem 
 					item={val} 
 					key={val._id}
-					dispatch={this.props.dispatch} 
+					groupUpdate={::this.groupUpdate} 
 					friendList={this.props.friendList} 
+					_id_user = {this.props.auth._id}
 				/>
 			});
 		}
-
-
-		console.log('render ', this.props.friendList.list);
 
 		// col-md-4
 		return <div>
@@ -172,6 +229,12 @@ class ChatListComp extends React.Component {
 const mapStateToProps = (state) => {
 	return {...state}
 }
-ChatListComp = connect(mapStateToProps)(ChatListComp)
+const mapDispatchToProps = (dispatch) => {
+	return {
+		dispatch: dispatch,
+		groupChange: bindActionCreators(groupChange, dispatch)
+	}
+}
+ChatListComp = connect(mapStateToProps, mapDispatchToProps)(ChatListComp)
 
 export default ChatListComp
