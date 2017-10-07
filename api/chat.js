@@ -203,7 +203,7 @@ apiChat.joinPersonal = (opts) => {
 	});
 };
 
-apiChat.message = function (opts, cb) {
+apiChat.message = function (opts) {
 	if (! opts.rId) {
 		return Promise.reject(new Error('Wrong data'));
 	}
@@ -254,8 +254,8 @@ apiChat.message = function (opts, cb) {
 };
 
 
-apiChat.addChatGroup = (opts, cb) => {
-	if (! opts.users.length || ! opts.users.length) {
+apiChat.addChatGroup = (opts) => {
+	if (! opts.users || ! opts.users.length) {
 		return Promise.reject(new Error('Wrong data'));
 	}
 	
@@ -271,10 +271,10 @@ apiChat.addChatGroup = (opts, cb) => {
 			};
 		});
 		
-		let groupObj = {
+		groupObj = {
 			users: opts.users,
 			creator: user._id,
-			cDate: new Date(),
+			date: new Date(),
 			type: 'group',
 		};
 
@@ -314,7 +314,7 @@ apiChat.addChatGroup = (opts, cb) => {
 }
 
 apiChat.editChatGroup = (opts, cb) => {
-	if (! opts._id || ! opts.users.length || ! opts.users.length) {
+	if (! opts._id || ! opts.users || ! opts.users.length) {
 		return Promise.reject(new Error('Wrong data'));
 	}
 

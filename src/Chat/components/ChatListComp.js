@@ -10,22 +10,6 @@ import {Alert} from '../../helpers/component'
 
 import UserLoginComp from '../../User/UserLoginComp'
 
-const groupChange = (opts) => {
-	let prop = {
-		_id: opts._id,
-		users: opts.users,
-	}
-	if (opts._id.toString() == '-1') {
-		prop.type = 'GROUP_ADD';
-		prop.fetch = 'chat.addChatGroup';
-	} else {
-		prop.type = 'GROUP_EDIT';
-		prop.fetch = 'chat.editChatGroup';
-	}
-
-	console.log('prop ', prop);
-	api(prop);
-}
 
 class GroupForm extends React.Component {
 	constructor(props) {
@@ -67,8 +51,7 @@ class GroupForm extends React.Component {
 			}),
 
 		};
-		console.log('opts ', opts);
-		this.props.groupUpdate(opts)
+		this.props.groupUpdate(opts);
 	}
 
 
@@ -105,6 +88,11 @@ class ChatItem extends React.Component {
 		e.preventDefault();
 		this.setState({
 			edit: ! this.state.edit,
+		});
+	}
+	componentWillReceiveProps (newProps) {
+		this.setState({
+			edit: !! newProps.item.edit,
 		});
 	}
 	render () {
@@ -157,6 +145,25 @@ class ChatItem extends React.Component {
 }
 
 class ChatListComp extends React.Component {
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			addGr: false,
+		};
+	}
+	// show/hide form
+	chatAdd (e) {
+		e.preventDefault();
+		this.setState({
+			addGr: ! this.state.edit,
+		});
+	}
+	componentWillReceiveProps (newProps) {
+		this.setState({
+			addGr: !! newProps.chatList.addGr,
+		});
+	}
 	componentWillMount () {
 		this.props.dispatch(api({
 			type: 'CHAT_LIST',
@@ -219,6 +226,24 @@ class ChatListComp extends React.Component {
 		return <div>
 			<Alert opts={alertOpts} />
 
+			<div>
+				<div className={! this.state.addGr ? 'hidden' : ''}>
+					<GroupForm 
+						friendList = {this.props.friendList}
+						users = {[]}
+						_id = '-1'
+						groupUpdate = {::this.groupUpdate}
+					/>
+				</div>
+				<div className={this.state.addGr ? 'hidden' : ''}>
+					<button className='btn btn-default' onClick={::this.chatAdd}>
+						<span className='glyphicon glyphicon-plus'></span>
+						Add group
+					</button>
+				</div>
+				<br />
+			</div>
+
 			<table className="table table-striped table-hover">
 				<tbody>{chats}</tbody>
 			</table>
@@ -229,12 +254,7 @@ class ChatListComp extends React.Component {
 const mapStateToProps = (state) => {
 	return {...state}
 }
-const mapDispatchToProps = (dispatch) => {
-	return {
-		dispatch: dispatch,
-		groupChange: bindActionCreators(groupChange, dispatch)
-	}
-}
-ChatListComp = connect(mapStateToProps, mapDispatchToProps)(ChatListComp)
+
+ChatListComp = connect(mapStateToProps)(ChatListComp)
 
 export default ChatListComp

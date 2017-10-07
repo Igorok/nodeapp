@@ -16,6 +16,7 @@ const chatList = (state = initState, action) => {
 				list: [...state.list],
 			};
 		case 'CHAT_LIST_SUCCESS':
+			action.data = action.data || [];
 			return {
 				fetch_status: 'success',
 				list: [...action.data],
@@ -35,6 +36,7 @@ const chatList = (state = initState, action) => {
 		case 'GROUP_ADD_SUCCESS':
 			state.list = [action.data, ...state.list];
 			return {
+				addGr: false,
 				fetch_status: 'success_add',
 				list: state.list,
 			};
@@ -57,6 +59,7 @@ const chatList = (state = initState, action) => {
 					return;
 				} else {
 					v.users = action.data.users;
+					v.edit = false;
 					return false;
 				}
 			});
