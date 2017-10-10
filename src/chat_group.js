@@ -3,25 +3,22 @@ import { render } from 'react-dom'
 import { Provider } from 'react-redux'
 
 import 'bootstrap/dist/css/bootstrap.css';
-import 'react-select/dist/react-select.css';
 import './styles/index.scss'
 
 import {layout} from './helpers/component'
-import ChatListComp from './Chat/components/ChatListComp'
+import GroupComp from './Chat/components/GroupComp'
 
 import auth from './Auth/AuthRed'
-import chatList from './Chat/reducers/ListRed'
-import friendList from './User/FriendRed'
+import chatGroup from './Chat/reducers/GroupRed'
 
 import {configureStore} from './helpers/configureStore'
 
 let store = configureStore({
 	auth: auth,
-	chatList: chatList,
-	friendList: friendList,
+	chatGroup: chatGroup,
 });
 
-let Comp = layout(ChatListComp, true);
+let Comp = layout(GroupComp, true);
 render(
 	<Provider store={store}>
 		<Comp />

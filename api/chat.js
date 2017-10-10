@@ -380,6 +380,86 @@ apiChat.editChatGroup = (opts, cb) => {
 }
 
 
+apiChat.joinGroup = (opts) => {
+	if (! opts.roomId) {
+		return Promise.reject(new Error('Chat not found'));
+	}
+	let roomId = helper.mongoId(opts.roomId),
+		chatGr = null,
+		loginById = {},
+		result = {
+			users: [],
+			messages: [],
+		};
+
+	return api.user.checkAuth(opts)
+	// get chat group
+	.then((u) => {
+		user = u;
+		return new Promise ((resolve, reject) => {
+			var q = {
+				_id: roomId,
+				type: 'group',
+				$and: [
+					{'users._id': user._id},
+				],
+			};
+			db.collection('chatgroups').findOne(q, (e, r) => {
+				if (e) return reject(e);
+				if (! r) return reject(new Error('Chat not found!'));
+
+				chatGr = r;
+				resolve();
+			});
+		});
+	})
+	// get users
+	.then(() => {
+		result.roomId = chatGr._id.toString();
+		let uIds = chatGr.users.map((u) => {
+			return u._id;
+		});
+		return new Promise ((resolve, reject) => {
+			db.collection('users').find({_id: {$in: uIds}}, {login: 1, dtActive: 1}).toArray((e, r) => {
+				if (e) return reject(e);
+
+				_.forEach(r, (u) => {
+					loginById[u._id] = u.login;
+					result.users.push({
+						_id: u._id,
+						login: u.login,
+						online: api.user.checkOnline(u.dtActive),
+					});
+				});
+
+				resolve();
+			});
+		});
+	})
+	// get messages
+	.then(() => {
+		return new Promise ((resolve, reject) => {
+			let q = {
+				rId: chatGr._id,
+				date: {
+					$gte: moment().subtract(10, 'days').toDate()
+				}
+			};
+			db.collection('chatmessages').find(q, {sort: {date: 1}, limit: 100}).toArray((e, r) => {
+				if (e) return reject(e);
+
+				result.messages = _.map(r, (msg) => {
+					msg.login = loginById[msg.uId] || 'Not found';
+					msg.fDate = moment(msg.date).calendar();
+					return msg
+				});
+
+				resolve(result);
+			});
+		});
+	});
+};
+
 let init = () => {
 	return helper.getConfig()
 	.then((r) => {

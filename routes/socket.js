@@ -50,6 +50,33 @@ let init = (server) => {
 				});
 			});
 
+			socket.on('joinGroup', (param) => {
+				let room = null;
+				api.chat.joinGroup(param)
+				.then((r) => {
+					room = r;
+					return new Promise((resolve, reject) => {
+						socket.join(room.roomId, (e) => {
+							if (e) return reject(e);
+							resolve();
+						});
+					});
+				})
+				.then(() => {
+					// to room
+					socket.to(room.roomId.toString()).emit('freshStatus', {
+						roomId: room.roomId, 
+						users: room.users
+					});
+					// to user
+					socket.emit('joinGroup', room);
+					return;
+				})
+				.catch((e) => {
+					return emitError(e);
+				});
+			});
+
 			socket.on('message', (param) => {
 				api.chat.message(param)
 				.then((r) => {
@@ -62,29 +89,6 @@ let init = (server) => {
 					return emitError(e);
 				});
 			});
-
-			/**
-			 * join to group between two users
-			 * take token, users ids and returned a room id and users with statuses
-			 *
-			 * 
-			socket.on('joinPersonal', function (_obj) {
-				if (_.isEmpty(_obj)) {
-					return emitError(404);
-				}
-				var data = {
-					params: []
-				};
-				data.params.push(_obj);
-				cokcore.ctx.api.chat.joinPersonal(data, safe.sure(emitError, function (data) {
-					socket.join(data._id, safe.sure(emitError, function () {
-						socket.to(data._id).emit('freshStatus', {_id: data._id, users: data.users});
-						socket.emit('joinPersonal', {_id: data._id, users: data.users, history: data.history});
-					}));
-				}));
-			});
-			*/
-
 
 			next();
 		});

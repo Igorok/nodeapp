@@ -50,6 +50,7 @@ const config = new Promise ((resolve, reject) => {
 			user_list: path.resolve(__dirname, 'src/user_list.js'),
 			chat_list: path.resolve(__dirname, 'src/chat_list.js'),
 			chat_personal: path.resolve(__dirname, 'src/chat_personal.js'),
+			chat_group: path.resolve(__dirname, 'src/chat_group.js'),
 		},
 		output: {
 			filename: '[name].js',

@@ -1,9 +1,9 @@
 import _ from 'lodash';
-let userId = window.locals.userId || null;
+let roomId = window.locals.roomId || null;
 
 let initState = {
-	roomId: null,
-	userId: userId,
+	roomId: roomId,
+	// userId: null,
 	users: [],
 	messages: [],
 	fetch_status: null,
@@ -12,9 +12,9 @@ let initState = {
 const chatList = (state = initState, action) => {
 	state = {...state};
 	switch (action.type) {
-		case 'JOIN_PERS_SUCCESS':
+		case 'JOIN_GRP_SUCCESS':
 			state.fetch_status = 'success';
-			state.roomId = action.roomId;
+			// state.roomId = action.roomId;
 			state.users = action.users;
 			state.messages = action.messages;
 			return state;

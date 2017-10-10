@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import client from 'socket.io-client'
 
 import {Alert} from '../../helpers/component'
-import {joinPers, err, message} from '../ChatAct'
+import {joinGrp, err, message} from '../ChatAct'
 import UserLoginComp from '../../User/UserLoginComp'
 import MsgListComp from './MsgListComp'
 import MsgFormComp from './MsgFormComp'
@@ -14,8 +14,10 @@ class ChatPersComp extends React.Component {
 		
 		this.io = client(window.location.host);
 
-		this.io.on('joinPers', (r) => {
-			this.props.dispatch(joinPers(r));
+		this.io.on('joinGroup', (r) => {
+            console.log('joinGroup ', r);
+
+			this.props.dispatch(joinGrp(r));
 		});
 
 		this.io.on('message', (r) => {
@@ -35,8 +37,8 @@ class ChatPersComp extends React.Component {
 	emitMessage (msg) {		
 		let p = {
 			token: this.props.auth.token,
-			uId: this.props.chatPersonal.userId,
-			rId: this.props.chatPersonal.roomId,
+			// uId: this.props.chatGroup.userId,
+			rId: this.props.chatGroup.roomId,
 			msg: msg,
 		}
 		this.io.emit('message', p);
@@ -44,9 +46,11 @@ class ChatPersComp extends React.Component {
 	componentWillMount () {
 		let p = {
 			token: this.props.auth.token,
-			userId: this.props.chatPersonal.userId,
-		}
-		this.io.emit('joinPers', p);
+			roomId: this.props.chatGroup.roomId,
+        }
+        console.log('emit ', p);
+
+		this.io.emit('joinGroup', p);
 	}
 
 	render () {
@@ -55,14 +59,14 @@ class ChatPersComp extends React.Component {
 			messages = null;
 	
 		if (
-			this.props.chatPersonal.fetch_status === 'error'
+			this.props.chatGroup.fetch_status === 'error'
 		) {
 			alertOpts = {
 				className: 'danger',
-				text: this.props.chatPersonal.fetch_error
+				text: this.props.chatGroup.fetch_error
 			}
 		} else if (
-			this.props.chatPersonal.fetch_status === 'send'
+			this.props.chatGroup.fetch_status === 'send'
 		) {
 			alertOpts = {
 				className: 'info',
@@ -74,9 +78,9 @@ class ChatPersComp extends React.Component {
 		// col-md-4
 		return <div>
 			<Alert opts={alertOpts} />
-			<UserLoginComp users={this.props.chatPersonal.users} />
+			<UserLoginComp users={this.props.chatGroup.users} />
 			<br />
-			<MsgListComp messages={this.props.chatPersonal.messages} />
+			<MsgListComp messages={this.props.chatGroup.messages} />
 			<MsgFormComp emitMessage={::this.emitMessage} />
 		</div>
 		

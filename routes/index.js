@@ -100,6 +100,14 @@ let init = () => {
 				};
 				res.render('simple_view', opts);
 			});
+			router.get('/chat-group/:roomId', function(req, res, next) {
+				let opts = {
+					javascript: ['chat_group'],
+					variables: {roomId: req.params.roomId ? req.params.roomId.toString() : null},
+					title: 'Express'
+				};
+				res.render('simple_view', opts);
+			});
 
 
 
