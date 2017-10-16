@@ -52,17 +52,17 @@ let getConfig = () => {
 
 let getMongo = () => {
 	if (db) return Promise.resolve(db);
-	
+
 	return getConfig()
 		.then((r) => {
 			return new Promise((resolve, reject) => {
-				let url = `mongodb://${r.mongo.host}:${r.mongo.port}/${r.mongo.db}`;
+				let url = `mongodb://${r.mongo.user}:${r.mongo.password}@${r.mongo.host}:${r.mongo.port}/${r.mongo.db}`;
 				mongodb.MongoClient.connect(url, (e, _db) => {
 					if (e) return reject(e);
 					console.log('mongo connected ', url);
 
 					db = _db;
-					resolve(db);
+					resolve();
 				});
 			});
 		})
