@@ -37,11 +37,11 @@ let getConfig = () => {
 		.then(() => {
 			cfg = _.merge.apply(null, cfgArr);
 			if (process.env.MONGOHOST) {
-				self.ctx.cfg.mongo.auth = true;
-				self.ctx.cfg.mongo.host = process.env.MONGOHOST.toString();
-				self.ctx.cfg.mongo.port = parseInt(process.env.MONGOPORT);
-				self.ctx.cfg.mongo.user = process.env.MONGOUSER.toString();
-				self.ctx.cfg.mongo.password = process.env.MONGOPASSWORD.toString();
+				cfg.mongo.auth = true;
+				cfg.mongo.host = process.env.MONGOHOST.toString();
+				cfg.mongo.port = parseInt(process.env.MONGOPORT);
+				cfg.mongo.user = process.env.MONGOUSER.toString();
+				cfg.mongo.password = process.env.MONGOPASSWORD.toString();
 			}
 			
 			return cfg;
