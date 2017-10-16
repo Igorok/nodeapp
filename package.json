@@ -52,9 +52,7 @@
     "socket.io": "^2.0.3",
     "socket.io-client": "^2.0.3",
     "style-loader": "^0.18.2",
-    "url-loader": "^0.5.9"
-  },
-  "devDependencies": {
+    "url-loader": "^0.5.9",
     "webpack": "^3.7.1",
     "webpack-dev-middleware": "^1.12.0",
     "webpack-hot-middleware": "^2.19.1"
