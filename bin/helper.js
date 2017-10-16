@@ -29,7 +29,7 @@ let getConfig = () => {
 				cfgArr.push(cfg);
 			})
 			.catch((e) => {
-				criticalError(e);
+				console.trace(e);
 			});
 		}
 	});
