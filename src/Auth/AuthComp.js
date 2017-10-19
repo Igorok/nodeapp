@@ -89,6 +89,11 @@ class AuthComp extends React.Component {
 								disabled={disabled}
 							>Submit</button>
 						</form>
+						<br />
+						<p className='text-center'>
+							<a href='/registration'>Registration</a>
+						</p>
+						
 					</div>
 				</div>
 			</div>

@@ -24,6 +24,13 @@ let init = () => {
 				};
 				res.render('simple_view', opts);
 			});
+			router.get('/registration', function(req, res, next) {
+				let opts = {
+					javascript: ['registration'],
+					title: 'Express'
+				};
+				res.render('simple_view', opts);
+			});
 			router.get('/profile', function(req, res, next) {
 				let opts = {
 					javascript: ['profile'],

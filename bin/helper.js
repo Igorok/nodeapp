@@ -56,7 +56,12 @@ let getMongo = () => {
 	return getConfig()
 		.then((r) => {
 			return new Promise((resolve, reject) => {
-				let url = `mongodb://${r.mongo.user}:${r.mongo.password}@${r.mongo.host}:${r.mongo.port}/${r.mongo.db}`;
+				let url = 'mongodb://';
+				if (r.mongo.user) {
+					url += r.mongo.user + ':' + r.mongo.password + '@';
+				}
+				url += r.mongo.host + ':' + r.mongo.port + '/' + r.mongo.db;
+
 				mongodb.MongoClient.connect(url, (e, _db) => {
 					if (e) return reject(e);
 					console.log('mongo connected ', url);

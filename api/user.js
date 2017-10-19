@@ -15,6 +15,7 @@ apiUser.checkOnline = (dt) => {
 	return Date.now() - dt.valueOf() < 5 * 60 * 1000;
 };
 
+const emailReg = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
 
 apiUser.getUserList = (opts) => {
 	let user = null,
@@ -445,11 +446,52 @@ apiUser.getUsersStatus = (opts) => {
 }
 
 
+apiUser.registration = (opts) => {
+	if (
+		! opts.login || 
+		! opts.password || 
+		! opts.email || 
+		! emailReg.test(opts.email.toString())
+	) {
+		return Promise.reject(new Error('Wrong data'));
+	}
 
+	opts.login = opts.login.toString().trim();
+	opts.email = opts.email.toString().trim();
+	opts.password = opts.password.toString().trim();
+	let hash = crypto.createHash('sha1');
+	hash = hash.update(opts.password).digest('hex');
 
-
-
-
+	return new Promise((resolve, reject) => {
+		let q = {
+			$or : [
+				{login: login},
+				{email: email}
+			],
+		};
+		db.collection('users').findOne(q, (e, r) => {
+			if (e) return reject(e);
+			if (r) return reject(new Error('Login or email already registered'));
+			resolve();
+		});
+	})
+	.then((r) => {
+		return new Promise((resolve, reject) => {
+			var newUser = {
+				login: opts.login,
+				email: opts.email,
+				password: hash,
+				group: "SimpleUser",
+				dtCreated: new Date(),
+				status: 1
+			};
+			db.collection('users').insert(newUser, function (e, r) {
+				if (e) return reject(e);
+				resolve();
+			});
+		});
+	});
+};
 
 
 let init = () => {

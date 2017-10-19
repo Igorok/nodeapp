@@ -34,6 +34,8 @@ let plugins = [
 const config = {
 	entry: {
 		login: path.resolve(__dirname, 'src/login.js'),
+		registration: path.resolve(__dirname, 'src/registration.js'),
+
 		profile: path.resolve(__dirname, 'src/profile.js'),
 		about: path.resolve(__dirname, 'src/about.js'),
 		
