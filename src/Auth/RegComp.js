@@ -1,10 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
-// import {push} from 'react-router-redux'
-
 import {api} from '../helpers/action'
-import {Alert} from '../helpers/component'
-
+import {Alert, MathCaptcha} from '../helpers/component'
 
 class RegComp extends React.Component {
     constructor(props) {
@@ -29,6 +26,13 @@ class RegComp extends React.Component {
     formSubmit (e) {
         e.preventDefault();
         
+        if (! this.state.captcha) {
+            return this.props.dispatch({
+                type: 'REG_ERROR',
+                error: 'Captcha is not valid!!',
+            });
+        }
+
         if (this.state.password !== this.state.confPassword) {
             return this.props.dispatch({
                 type: 'REG_ERROR',
@@ -43,6 +47,11 @@ class RegComp extends React.Component {
             email: this.state.email,
             password: this.state.password,
         }));
+    }
+    checkCaptcha (v) {
+        this.setState({
+            captcha: v,
+        })
     }
 
     componentDidUpdate () {
@@ -131,6 +140,7 @@ class RegComp extends React.Component {
                                     required
                                 />
                             </div>
+                            <MathCaptcha cb={::this.checkCaptcha} />
                             <Alert opts={alertOpts} />
                             <button 
                                 type="submit" 
