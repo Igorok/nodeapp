@@ -23,36 +23,37 @@ class RegComp extends React.Component {
 
     changeField (e) {
         let stateObj = {};
-		stateObj[e.target.id] = e.target.value;
-		this.setState(stateObj);
+        stateObj[e.target.id] = e.target.value;
+        this.setState(stateObj);
     }
     formSubmit (e) {
         e.preventDefault();
+        
+        if (this.state.password !== this.state.confPassword) {
+            return this.props.dispatch({
+                type: 'REG_ERROR',
+                error: 'Please, confirm password!',
+            });
+        }
 
-        console.log(
-            'this state ', this.state
-        );
-
-        // this.props.dispatch(api({
-        //     type: 'REG',
-        //     fetch: 'user.registration',
-        //     login: this.state.login,
-        //     email: this.state.email,
-        //     password: this.state.password,
-        // }));
+        this.props.dispatch(api({
+            type: 'REG',
+            fetch: 'user.registration',
+            login: this.state.login,
+            email: this.state.email,
+            password: this.state.password,
+        }));
     }
 
     componentDidUpdate () {
         if (this.props.reg.status === 'success') {
             setTimeout(() => {
-                return window.location = '/';
+                return window.location = '/login';
             }, 1000);
         }
     }
 
     render () {
-        console.log('qwe');
-
         let disabled = null,
             alertOpts = null;
     
@@ -70,7 +71,7 @@ class RegComp extends React.Component {
         } else if (this.props.reg.status === 'success') {
             alertOpts = {
                 className: 'success',
-                text: 'Loginned successfully',
+                text: 'Registered successfully, please login!',
             }
         }
 
@@ -81,7 +82,6 @@ class RegComp extends React.Component {
                         <h3 className="panel-title">Authentication</h3>
                     </div>
                     <div className="panel-body">
-                        <Alert opts={alertOpts} />
                         <form onSubmit={::this.formSubmit}>
                             <div className="form-group">
                                 <label htmlFor="login">Login</label>
@@ -131,6 +131,7 @@ class RegComp extends React.Component {
                                     required
                                 />
                             </div>
+                            <Alert opts={alertOpts} />
                             <button 
                                 type="submit" 
                                 className="btn btn-default btn-block"

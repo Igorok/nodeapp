@@ -465,8 +465,8 @@ apiUser.registration = (opts) => {
 	return new Promise((resolve, reject) => {
 		let q = {
 			$or : [
-				{login: login},
-				{email: email}
+				{login: opts.login},
+				{email: opts.email}
 			],
 		};
 		db.collection('users').findOne(q, (e, r) => {
