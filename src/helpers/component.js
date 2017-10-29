@@ -1,6 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import _ from 'lodash';
 
+import 'jquery';
+import 'bootstrap/dist/js/bootstrap';
 
 /**
  * boostrap message
@@ -118,6 +121,150 @@ export class MathCaptcha extends React.Component {
         </div>
     }
 }
+
+
+/**
+ * check a sum of two numbers
+ * @param {Function} cb - callback to use a result of validation
+ */
+export class TextEditor extends React.Component {
+    setMode (e) {
+        e.preventDefault();
+        let sCmd = e.target.dataset.scmd;
+        let sValue = e.target.dataset.svalue;
+        console.log('sCmd, sValue ', sCmd, sValue);
+
+        document.execCommand(sCmd, false, sValue); 
+        // oDoc.focus();
+    }
+    render () {
+        let blockArr = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'pre'];
+        blockArr = _.map(blockArr, (v) => {
+            return <li key={v}>
+                <a 
+                    href='#' 
+                    onClick={::this.setMode}
+                    data-scmd='formatblock' 
+                    data-svalue={v}
+                >
+                    &lt;{v}&gt;
+                </a>
+            </li>
+        });
+        let fontArr = ['Arial', 'Arial Black', 'Courier New', 'Times New Roman'];
+        fontArr = _.map(fontArr, (v) => {
+            return <li key={v}>
+                <a 
+                    href='#' 
+                    onClick={::this.setMode}
+                    data-scmd='fontname' 
+                    data-svalue={v}
+                >
+                    &lt;{v}&gt;
+                </a>
+            </li>
+        });
+        let sizeArr = [
+            {v: '1', desc: 'Very small'},
+            {v: '2', desc: 'A bit small'},
+            {v: '3', desc: 'Normal'},
+            {v: '4', desc: 'Medium-large'},
+            {v: '5', desc: 'Big'},
+            {v: '6', desc: 'Very big'},
+            {v: '7', desc: 'Maximum'},
+        ];
+        sizeArr = _.map(sizeArr, (v) => {
+            return <li key={v.v}>
+                <a 
+                    href='#' 
+                    onClick={::this.setMode}
+                    data-scmd='fontsize' 
+                    data-svalue={v.v}
+                >
+                    {v.desc}
+                </a>
+            </li>
+        });
+
+
+        return <div>
+            <div className='toolBar'>
+                <div className="btn-group">
+                    <button 
+                        className="btn btn-default dropdown-toggle" 
+                        type="button" 
+                        id="dropdownBlock" 
+                        data-toggle="dropdown" 
+                        aria-haspopup="true" 
+                        aria-expanded="true"
+                    >
+                        Formatting&nbsp;
+                        <span className="caret"></span>
+                    </button>
+                    <ul className="dropdown-menu" aria-labelledby="dropdownBlock">
+                        {blockArr}
+                    </ul>
+                </div>
+
+                <div className="btn-group">
+                    <button 
+                        className="btn btn-default dropdown-toggle" 
+                        type="button" 
+                        id="dropdownFont" 
+                        data-toggle="dropdown" 
+                        aria-haspopup="true" 
+                        aria-expanded="true"
+                    >
+                        Font&nbsp;
+                        <span className="caret"></span>
+                    </button>
+                    <ul className="dropdown-menu" aria-labelledby="dropdownFont">
+                        {fontArr}
+                    </ul>
+                </div>
+
+                <div className="btn-group">
+                    <button 
+                        className="btn btn-default dropdown-toggle" 
+                        type="button" 
+                        id="dropdownSize" 
+                        data-toggle="dropdown" 
+                        aria-haspopup="true" 
+                        aria-expanded="true"
+                    >
+                        Size&nbsp;
+                        <span className="caret"></span>
+                    </button>
+                    <ul className="dropdown-menu" aria-labelledby="dropdownSize">
+                        {sizeArr}
+                    </ul>
+                </div>
+            </div>
+            <br />
+            <div id="contenteditable"
+                className='form-control textEditor'
+                onInput={this.emitChange} 
+                onBlur={this.emitChange}
+                contentEditable
+                dangerouslySetInnerHTML={{__html: this.props.description}}>
+            </div>
+            <div className="checkbox">
+                <label>
+                    <input 
+                        type="checkbox" 
+                        name="switchMode" 
+                        id="switchMode" 
+
+                    /> 
+                    Show HTML
+                </label>
+            </div>
+        </div>;
+    }
+
+}
+
+
 
 /**
  * function to render layout

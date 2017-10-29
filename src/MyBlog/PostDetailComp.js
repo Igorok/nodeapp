@@ -12,7 +12,7 @@ import FroalaEditor from 'react-froala-wysiwyg';
 
 
 import {api} from '../helpers/action'
-import {Alert} from '../helpers/component'
+import {Alert, TextEditor} from '../helpers/component'
 
 class PostDetailComp extends React.Component {
 	constructor(props) {
@@ -140,16 +140,8 @@ class PostDetailComp extends React.Component {
 								/>
 							</div>
 							<div className="form-group">
-								<label htmlFor="description">Description</label>
-
-								<FroalaEditor 
-									tag='textarea'
-									model={this.state.description}
-									onModelChange={::this.handleModelChange}
-									config = {this.froalaConfig}
-								/>
+								<label htmlFor="status">Status</label>
 							</div>
-
 							<div className="form-group">
 								<select 
 									id = 'status'
@@ -167,6 +159,12 @@ class PostDetailComp extends React.Component {
 									})}
 								</select>
 							</div>
+							
+							<div className="form-group">
+								<label >Description</label>
+								<TextEditor description={this.state.description} />
+							</div>
+
 						</div>
 						<div className="modal-footer">
 							<button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
