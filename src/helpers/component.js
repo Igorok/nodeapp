@@ -123,75 +123,160 @@ export class MathCaptcha extends React.Component {
 }
 
 
+
+
+
+
+
+
+
+
+const getBlockArr = (cb) => {
+    let arr = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'pre'];
+    arr = _.map(arr, (v) => {
+        return <li key={v}>
+            <a 
+                href='#' 
+                onClick={cb}
+                data-scmd='formatblock' 
+                data-svalue={v}
+            >
+                &lt;{v}&gt;
+            </a>
+        </li>
+    });
+    return arr;
+};
+
+const getFontArr = (cb) => {
+    let arr = ['Arial', 'Arial Black', 'Courier New', 'Times New Roman'];
+    arr = _.map(arr, (v) => {
+        return <li key={v}>
+            <a 
+                href='#' 
+                onClick={cb}
+                data-scmd='fontname' 
+                data-svalue={v}
+            >
+                {v}
+            </a>
+        </li>
+    });
+    return arr;
+};
+
+const getSizeArr = (cb) => {
+    let arr = [
+        {v: '1', desc: 'Very small'},
+        {v: '2', desc: 'A bit small'},
+        {v: '3', desc: 'Normal'},
+        {v: '4', desc: 'Medium-large'},
+        {v: '5', desc: 'Big'},
+        {v: '6', desc: 'Very big'},
+        {v: '7', desc: 'Maximum'},
+    ];
+    arr = _.map(arr, (v) => {
+        return <li key={v.v}>
+            <a 
+                href='#' 
+                onClick={cb}
+                data-scmd='fontsize' 
+                data-svalue={v.v}
+            >
+                {v.desc}
+            </a>
+        </li>
+    });
+    return arr;
+};
+
+const getColorArr = (cb) => {
+    var arr = [
+        "#ac725e",
+        "#d06b64",
+        "#f83a22",
+        "#fa573c",
+        "#ff7537",
+        "#ffad46",
+        "#42d692",
+        "#16a765",
+        "#7bd148",
+        "#b3dc6c",
+        "#fbe983",
+        "#fad165",
+        "#92e1c0",
+        "#9fe1e7",
+        "#9fc6e7",
+        "#4986e7",
+        "#9a9cff",
+        "#b99aff",
+        "#c2c2c2",
+        "#cabdbf",
+        "#cca6ac",
+        "#f691b2",
+        "#cd74e6",
+        "#a47ae2",
+        "#ffffff",
+        "#000000",
+        '#555',
+    ];
+    arr = _.chunk(arr, 5);
+
+    let colorA = (arr) => {
+        return _.map(arr, (v) => {
+            return <a 
+                key={v}
+                href='#' 
+                onClick={cb}
+                data-scmd='forecolor' 
+                data-svalue={v}
+                className='colorItem'
+                style={{backgroundColor: v}}
+            >
+            </a>
+        });
+    };
+    arr = _.map(arr, (v, i) => {
+        return  <li key={i}>
+           {colorA(v) }
+        </li>
+    });
+
+    return arr;
+};
+
+
 /**
  * check a sum of two numbers
  * @param {Function} cb - callback to use a result of validation
  */
 export class TextEditor extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.blockArr = getBlockArr(::this.setMode);
+        this.fontArr = getFontArr(::this.setMode);
+        this.sizeArr = getSizeArr(::this.setMode);
+        this.colorArr = getColorArr(::this.setMode);
+
+        this.state = {
+            text: '',
+        };
+    }
     setMode (e) {
         e.preventDefault();
-        let sCmd = e.target.dataset.scmd;
-        let sValue = e.target.dataset.svalue;
-        console.log('sCmd, sValue ', sCmd, sValue);
-
+        let sCmd = e.currentTarget.dataset.scmd;
+        let sValue = e.currentTarget.dataset.svalue || null;
         document.execCommand(sCmd, false, sValue); 
-        // oDoc.focus();
     }
+    
+
     render () {
-        let blockArr = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'pre'];
-        blockArr = _.map(blockArr, (v) => {
-            return <li key={v}>
-                <a 
-                    href='#' 
-                    onClick={::this.setMode}
-                    data-scmd='formatblock' 
-                    data-svalue={v}
-                >
-                    &lt;{v}&gt;
-                </a>
-            </li>
-        });
-        let fontArr = ['Arial', 'Arial Black', 'Courier New', 'Times New Roman'];
-        fontArr = _.map(fontArr, (v) => {
-            return <li key={v}>
-                <a 
-                    href='#' 
-                    onClick={::this.setMode}
-                    data-scmd='fontname' 
-                    data-svalue={v}
-                >
-                    &lt;{v}&gt;
-                </a>
-            </li>
-        });
-        let sizeArr = [
-            {v: '1', desc: 'Very small'},
-            {v: '2', desc: 'A bit small'},
-            {v: '3', desc: 'Normal'},
-            {v: '4', desc: 'Medium-large'},
-            {v: '5', desc: 'Big'},
-            {v: '6', desc: 'Very big'},
-            {v: '7', desc: 'Maximum'},
-        ];
-        sizeArr = _.map(sizeArr, (v) => {
-            return <li key={v.v}>
-                <a 
-                    href='#' 
-                    onClick={::this.setMode}
-                    data-scmd='fontsize' 
-                    data-svalue={v.v}
-                >
-                    {v.desc}
-                </a>
-            </li>
-        });
-
-
         return <div>
             <div className='toolBar'>
                 <div className="btn-group">
                     <button 
-                        className="btn btn-default dropdown-toggle" 
+                        className="btn btn-default btn-sm dropdown-toggle" 
                         type="button" 
                         id="dropdownBlock" 
                         data-toggle="dropdown" 
@@ -202,13 +287,13 @@ export class TextEditor extends React.Component {
                         <span className="caret"></span>
                     </button>
                     <ul className="dropdown-menu" aria-labelledby="dropdownBlock">
-                        {blockArr}
+                        {this.blockArr}
                     </ul>
                 </div>
 
                 <div className="btn-group">
                     <button 
-                        className="btn btn-default dropdown-toggle" 
+                        className="btn btn-default btn-sm dropdown-toggle" 
                         type="button" 
                         id="dropdownFont" 
                         data-toggle="dropdown" 
@@ -219,13 +304,13 @@ export class TextEditor extends React.Component {
                         <span className="caret"></span>
                     </button>
                     <ul className="dropdown-menu" aria-labelledby="dropdownFont">
-                        {fontArr}
+                        {this.fontArr}
                     </ul>
                 </div>
 
                 <div className="btn-group">
                     <button 
-                        className="btn btn-default dropdown-toggle" 
+                        className="btn btn-default btn-sm dropdown-toggle" 
                         type="button" 
                         id="dropdownSize" 
                         data-toggle="dropdown" 
@@ -236,9 +321,89 @@ export class TextEditor extends React.Component {
                         <span className="caret"></span>
                     </button>
                     <ul className="dropdown-menu" aria-labelledby="dropdownSize">
-                        {sizeArr}
+                        {this.sizeArr}
                     </ul>
                 </div>
+
+                <div className="btn-group">
+                    <button 
+                        className="btn btn-default btn-sm dropdown-toggle" 
+                        type="button" 
+                        id="dropdownColor" 
+                        data-toggle="dropdown" 
+                        aria-haspopup="true" 
+                        aria-expanded="true"
+                    >
+                        Font color&nbsp;
+                        <span className="caret"></span>
+                    </button>
+                    <ul className="dropdown-menu" aria-labelledby="dropdownColor">
+                        {this.colorArr}
+                    </ul>
+                </div>
+
+                <button 
+                    className="btn btn-default btn-sm"
+                    type="button"
+                    data-scmd='removeFormat'
+                    onClick={::this.setMode}
+                >
+                    <span className='glyphicon glyphicon-erase'></span>
+                </button>
+
+                <button 
+                    className="btn btn-default btn-sm"
+                    type="button"
+                    data-scmd='bold'
+                    onClick={::this.setMode}
+                >
+                    <span className='glyphicon glyphicon-bold'></span>
+                </button>
+
+                <button 
+                    className="btn btn-default btn-sm"
+                    type="button"
+                    data-scmd='italic'
+                    onClick={::this.setMode}
+                >
+                    <span className='glyphicon glyphicon-italic'></span>
+                </button>
+
+                <button 
+                    className="btn btn-default btn-sm"
+                    type="button"
+                    data-scmd='underline'
+                    onClick={::this.setMode}
+                >
+                    <span className='glyphicon glyphicon-text-color'></span>
+                </button>
+
+
+                <button 
+                    className="btn btn-default btn-sm"
+                    type="button"
+                    data-scmd='justifyleft'
+                    onClick={::this.setMode}
+                >
+                    <span className='glyphicon glyphicon-align-left'></span>
+                </button>
+                <button 
+                    className="btn btn-default btn-sm"
+                    type="button"
+                    data-scmd='justifycenter'
+                    onClick={::this.setMode}
+                >
+                    <span className='glyphicon glyphicon-align-center'></span>
+                </button>
+                <button 
+                    className="btn btn-default btn-sm"
+                    type="button"
+                    data-scmd='justifyright'
+                    onClick={::this.setMode}
+                >
+                    <span className='glyphicon glyphicon-align-right'></span>
+                </button>
+
             </div>
             <br />
             <div id="contenteditable"
