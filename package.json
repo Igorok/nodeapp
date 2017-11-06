@@ -27,7 +27,6 @@
     "express": "~4.15.2",
     "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^0.11.2",
-    "froala-editor": "^2.6.5",
     "isomorphic-fetch": "^2.2.1",
     "jquery": "^3.2.1",
     "lodash": "^4.17.4",
@@ -40,7 +39,6 @@
     "pug": "~2.0.0-beta11",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
-    "react-froala-wysiwyg": "^2.7.0",
     "react-redux": "^5.0.5",
     "react-select": "^1.0.0-rc.10",
     "redux": "^3.7.2",
@@ -55,6 +53,7 @@
     "url-loader": "^0.5.9",
     "webpack": "^3.7.1",
     "webpack-dev-middleware": "^1.12.0",
-    "webpack-hot-middleware": "^2.19.1"
+    "webpack-hot-middleware": "^2.19.1",
+    "xss": "^0.3.4"
   }
 }

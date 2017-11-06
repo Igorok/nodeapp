@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import _ from 'lodash';
+import xss from 'xss';
 
 import 'jquery';
 import 'bootstrap/dist/js/bootstrap';
@@ -254,22 +255,67 @@ export class TextEditor extends React.Component {
     constructor(props) {
         super(props);
 
-        this.blockArr = getBlockArr(::this.setMode);
-        this.fontArr = getFontArr(::this.setMode);
-        this.sizeArr = getSizeArr(::this.setMode);
-        this.colorArr = getColorArr(::this.setMode);
+        this.blockArr = getBlockArr(::this.execCommand);
+        this.fontArr = getFontArr(::this.execCommand);
+        this.sizeArr = getSizeArr(::this.execCommand);
+        this.colorArr = getColorArr(::this.execCommand);
 
         this.state = {
             text: '',
+            modeSrc: false,
+            description: this.props.description,
         };
     }
-    setMode (e) {
+    componentWillReceiveProps (newProps) {
+        this.setState({
+            description: newProps.description,
+            cb: newProps.cb,
+        });
+    }
+
+    shouldComponentUpdate (nextProps, nextState) {
+        let upd = (
+            (
+                nextProps.description !== this.props.description &&
+                nextProps.description !== this.state.description
+            ) ||
+            this.state.modeSrc !== nextState.modeSrc
+        );
+        return upd;
+    }
+
+    switchMode (e) {
+        let text = null;
+        let checked = e.target.checked;
+
+        if (checked) {
+            text = _.escape(this.state.description);
+        } else {
+            text = xss(_.unescape(this.state.description))
+        }
+
+        this.setState({
+            modeSrc: checked,
+            description: text,
+        });
+    }
+    execCommand (e) {
         e.preventDefault();
         let sCmd = e.currentTarget.dataset.scmd;
         let sValue = e.currentTarget.dataset.svalue || null;
         document.execCommand(sCmd, false, sValue); 
     }
-    
+    getContent (e) {
+        let text = null;
+        if (this.state.modeSrc) {
+            text = e.target.innerText;
+        } else {
+            text = e.target.innerHTML;
+        }
+        this.setState({description: text}, () => {
+            this.props.cb(text);
+        });
+    }
 
     render () {
         return <div>
@@ -346,7 +392,7 @@ export class TextEditor extends React.Component {
                     className="btn btn-default btn-sm"
                     type="button"
                     data-scmd='removeFormat'
-                    onClick={::this.setMode}
+                    onClick={::this.execCommand}
                 >
                     <span className='glyphicon glyphicon-erase'></span>
                 </button>
@@ -355,7 +401,7 @@ export class TextEditor extends React.Component {
                     className="btn btn-default btn-sm"
                     type="button"
                     data-scmd='bold'
-                    onClick={::this.setMode}
+                    onClick={::this.execCommand}
                 >
                     <span className='glyphicon glyphicon-bold'></span>
                 </button>
@@ -364,7 +410,7 @@ export class TextEditor extends React.Component {
                     className="btn btn-default btn-sm"
                     type="button"
                     data-scmd='italic'
-                    onClick={::this.setMode}
+                    onClick={::this.execCommand}
                 >
                     <span className='glyphicon glyphicon-italic'></span>
                 </button>
@@ -372,18 +418,8 @@ export class TextEditor extends React.Component {
                 <button 
                     className="btn btn-default btn-sm"
                     type="button"
-                    data-scmd='underline'
-                    onClick={::this.setMode}
-                >
-                    <span className='glyphicon glyphicon-text-color'></span>
-                </button>
-
-
-                <button 
-                    className="btn btn-default btn-sm"
-                    type="button"
                     data-scmd='justifyleft'
-                    onClick={::this.setMode}
+                    onClick={::this.execCommand}
                 >
                     <span className='glyphicon glyphicon-align-left'></span>
                 </button>
@@ -391,7 +427,7 @@ export class TextEditor extends React.Component {
                     className="btn btn-default btn-sm"
                     type="button"
                     data-scmd='justifycenter'
-                    onClick={::this.setMode}
+                    onClick={::this.execCommand}
                 >
                     <span className='glyphicon glyphicon-align-center'></span>
                 </button>
@@ -399,7 +435,7 @@ export class TextEditor extends React.Component {
                     className="btn btn-default btn-sm"
                     type="button"
                     data-scmd='justifyright'
-                    onClick={::this.setMode}
+                    onClick={::this.execCommand}
                 >
                     <span className='glyphicon glyphicon-align-right'></span>
                 </button>
@@ -408,10 +444,11 @@ export class TextEditor extends React.Component {
             <br />
             <div id="contenteditable"
                 className='form-control textEditor'
-                onInput={this.emitChange} 
-                onBlur={this.emitChange}
+                onInput={::this.getContent} 
+                onBlur={::this.getContent}
                 contentEditable
-                dangerouslySetInnerHTML={{__html: this.props.description}}>
+                dangerouslySetInnerHTML={{__html: this.state.description}}
+            >
             </div>
             <div className="checkbox">
                 <label>
@@ -419,7 +456,8 @@ export class TextEditor extends React.Component {
                         type="checkbox" 
                         name="switchMode" 
                         id="switchMode" 
-
+                        onChange={::this.switchMode}
+                        checked={this.state.modeSrc}
                     /> 
                     Show HTML
                 </label>
@@ -429,7 +467,20 @@ export class TextEditor extends React.Component {
 
 }
 
+/*
+<div id="contenteditable"
+    className='form-control textEditor'
+    onInput={::this.getContent} 
+    onBlur={::this.getContent}
+    contentEditable
+    dangerouslySetInnerHTML={{__html: this.state.description}}
+>
 
+post -> (description)
+    (description) -> component 
+
+
+*/
 
 /**
  * function to render layout

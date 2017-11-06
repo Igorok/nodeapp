@@ -1,5 +1,6 @@
 const helper = require(__dirname + '/../bin/helper.js');
 const _ = require('lodash');
+const xss = require('xss');
 const moment = require('moment');
 
 let cfg = null,
@@ -165,7 +166,7 @@ apiBlog.getBlogPosts = (opts) => {
 		posts = posts.map((val) => {
 			val.user = loginById[val.uId];
 			val.created = moment(val.created).format('YYYY-MM-DD HH:mm');
-			val.description = _.unescape(val.description.substring(0, 140) + '...');
+			val.description = val.description.substring(0, 140) + '...';
 			delete val.uId;
 			return val;
 		});
@@ -209,7 +210,7 @@ apiBlog.getPostDetail = (opts) => {
 				if (e) return reject(e);
 				post.user = r ?  r.login : 'unknown';
 				post.created = moment(post.created).format('YYYY-MM-DD HH:mm');
-				post.description = _.unescape(post.description);
+				post.description = post.description;
 
 				delete post.uId;
 				delete post.public;
@@ -287,7 +288,7 @@ apiBlog.getMyBlogPosts = (opts) => {
 		posts = posts.map((val) => {
 			val.created = moment(val.created).format('YYYY-MM-DD HH:mm');
 			val.updated = moment(val.updated).format('YYYY-MM-DD HH:mm');
-			val.description = _.unescape(val.description.substring(0, 140) + '...');
+			val.description = val.description.substring(0, 140) + '...';
 			val.status = statObj[val.status];
 			val.approved = val.approved ? 'Approved' : 'Not approved';
 			return val;
@@ -308,8 +309,8 @@ apiBlog.editMyBlog = (opts) => {
 	opts._id = helper.mongoId(opts._id.toString());
 
 	let setObj = {
-		name: _.escape(opts.name.toString().trim()),
-		description: _.escape(opts.description.toString().trim()),
+		name: xss(opts.name.toString().trim()),
+		description: xss(opts.description.toString().trim()),
 		public: !! opts.public,
 		updated: new Date(),
 	};
@@ -368,7 +369,7 @@ apiBlog.getMyPostDetail = (opts) => {
 			db.collection('blogs').findOne({_id: post._bId}, (e, r) => {
 				if (e) return reject(e);
 				post.blogName = r ? r.name : null;
-				post.description = _.unescape(post.description);
+				post.description = post.description;
 				resolve(post);
 			});
 		});
@@ -385,13 +386,15 @@ apiBlog.editMyPostDetail = (opts) => {
 		return Promise.reject(new Error('Name and description are required'));
 	}
 
-	opts._id = helper.mongoId(opts._id.toString());
+    opts._id = helper.mongoId(opts._id.toString());
+
 	let setObj = {
 		status: opts.status.toString(),
-		name: _.escape(opts.name.toString().trim()),
-		description: _.escape(opts.description.toString().trim()),
+		name: xss(opts.name.toString().trim()),
+		description: xss(opts.description.toString().trim()),
 		updated: new Date(),
-	};
+    };
+
 	let q = {_id: opts._id};
 	return api.user.checkAuth(opts)
 	.then((u) => {

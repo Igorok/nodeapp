@@ -24,6 +24,7 @@
 }
 .textEditor {
     min-height: 250px;
+    overflow-y: auto;
 }
 .dropdown-menu > li > a.colorItem {
     display: inline-block;
