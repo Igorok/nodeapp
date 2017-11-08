@@ -1,4 +1,4 @@
-const helper = require(__dirname + '/../bin/helper.js');
+const helper = require(__dirname + '/helper.js');
 const _ = require('lodash');
 const xss = require('xss');
 const moment = require('moment');
@@ -352,7 +352,7 @@ apiBlog.getMyPostDetail = (opts) => {
 		return Promise.reject(new Error('The blog not found'));
 	}
 	opts._id = helper.mongoId(opts._id.toString());
-	
+
 	return api.user.checkAuth(opts)
 	.then((u) => {
 		return new Promise((resolve, reject) => {

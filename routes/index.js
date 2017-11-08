@@ -1,4 +1,4 @@
-let helper = require(__dirname + '/../bin/helper.js');
+let helper = require(__dirname + '/../api/helper.js');
 let express = require('express');
 let router = express.Router();
 
@@ -161,7 +161,7 @@ let init = () => {
 			console.trace(e);
 		});
 
-	
+
 
 
 

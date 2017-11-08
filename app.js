@@ -6,7 +6,7 @@
 var webpack = require('webpack');
 var webpackDevMiddleware = require('webpack-dev-middleware');
 var webpackHotMiddleware = require('webpack-hot-middleware');
-var config = require('../webpack.config');
+var config = require(__dirname + '/webpack.config');
 var compiler = webpack(config);
 
 
@@ -19,10 +19,10 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-let routeIndex = require(__dirname + '/../routes/index.js');
-let routeSocket = require(__dirname + '/../routes/socket.js');
+let routeIndex = require(__dirname + '/routes/index.js');
+let routeSocket = require(__dirname + '/routes/socket.js');
 
-let helper = require(__dirname + '/helper.js');
+let helper = require(__dirname + '/api/helper.js');
 
 let cfg = null,
 	db = null,
@@ -45,7 +45,7 @@ helper.getConfig()
 		app.use(webpackHotMiddleware(compiler))
 
 		// view engine setup
-		app.set('views', path.join(__dirname, '/../views'));
+		app.set('views', path.join(__dirname, '/views'));
 		app.set('view engine', 'pug');
 
 		// uncomment after placing your favicon in /public
@@ -54,7 +54,7 @@ helper.getConfig()
 		app.use(bodyParser.json());
 		app.use(bodyParser.urlencoded({ extended: false }));
 		app.use(cookieParser());
-		app.use(express.static(path.join(__dirname, '/../public')));
+		app.use(express.static(path.join(__dirname, '/public')));
 
 		app.use('/', rIndex);
 		// app.use('/users', users);

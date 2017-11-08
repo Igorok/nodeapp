@@ -43,7 +43,7 @@ let getConfig = () => {
 				cfg.mongo.user = process.env.MONGOUSER.toString();
 				cfg.mongo.password = process.env.MONGOPASSWORD.toString();
 			}
-			
+
 			return cfg;
 		}).catch((e) => {
 			criticalError(e);
@@ -89,7 +89,7 @@ let getApi = (arr) => {
 					api[name] = apiInitialized;
 					return;
 				});
-		} 
+		}
 	});
 	return arr.reduce((p, f) => p.then(f), Promise.resolve())
 		.then(() => {
@@ -106,7 +106,7 @@ let criticalError = (e) => {
 
 
 let mongoId = (_id) => {
-	if (! _id) return null;	
+	if (! _id) return null;
 	return mongodb.ObjectID(_id);
 }
 let newMongoId = () => {

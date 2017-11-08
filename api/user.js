@@ -1,4 +1,4 @@
-const helper = require(__dirname + '/../bin/helper.js');
+const helper = require(__dirname + '/helper.js');
 const crypto = require('crypto');
 const _ = require('lodash');
 const moment = require('moment');
@@ -29,7 +29,7 @@ apiUser.getUserList = (opts) => {
 					status: 1,
 				};
 				let rows = {
-					login: 1, 
+					login: 1,
 					dtActive: 1,
 				};
 
@@ -75,7 +75,7 @@ apiUser.getUserList = (opts) => {
 
 apiUser.getCurrentProfile = (opts) => {
 	let user = null;
-	
+
 	return apiUser.checkAuth(opts)
 		.then((u) => {
 			user = u;
@@ -107,7 +107,7 @@ apiUser.getCurrentProfile = (opts) => {
 
 apiUser.editCurrentProfile = (opts) => {
 	let user = null;
-	
+
 	if (! opts.login || ! opts.email) {
 		return Promise.reject(new Error('Login and email are required'));
 	}
@@ -141,7 +141,7 @@ apiUser.editCurrentProfile = (opts) => {
 				db.collection('users').count(q, (e, r) => {
 					if (e) return reject(e);
 					if (r) return reject(new Error('The login or the email already exists'));
-					
+
 					resolve()
 				});
 			});
@@ -155,7 +155,7 @@ apiUser.editCurrentProfile = (opts) => {
 				}};
 				db.collection('users').update({_id: user._id}, set, (e, r) => {
 					if (e) return reject(e);
-					
+
 					resolve()
 				});
 			});
@@ -321,7 +321,7 @@ apiUser.updateFriend = (opts) => {
 					friend: 'not_fr',
 				}
 			});
-			
+
 		}
 		// request wait of my approve
 		else if (friend === 'fr_req') {
@@ -413,7 +413,7 @@ apiUser.getFriendList = (opts) => {
 				status: 1,
 			};
 			let rows = {
-				login: 1, 
+				login: 1,
 				dtActive: 1,
 			};
 
@@ -433,7 +433,7 @@ apiUser.getFriendList = (opts) => {
 
 apiUser.getUsersStatus = (opts) => {
 	let user = null;
-	
+
 	if (! opts.login || ! opts.email) {
 		return Promise.reject(new Error('Login and email are required'));
 	}
@@ -448,9 +448,9 @@ apiUser.getUsersStatus = (opts) => {
 
 apiUser.registration = (opts) => {
 	if (
-		! opts.login || 
-		! opts.password || 
-		! opts.email || 
+		! opts.login ||
+		! opts.password ||
+		! opts.email ||
 		! emailReg.test(opts.email.toString())
 	) {
 		return Promise.reject(new Error('Wrong data'));

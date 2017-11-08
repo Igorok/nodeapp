@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const moment = require('moment');
 
-const helper = require(__dirname + '/../bin/helper.js');
+const helper = require(__dirname + '/helper.js');
 
 let cfg = null,
 	db = null,
@@ -16,7 +16,7 @@ apiChat.getChatList = (opts) => {
 	return api.user.checkAuth(opts)
 	.then((u) => {
 		user = u;
-		
+
 		return new Promise ((resolve, reject) => {
 			db.collection('chatgroups').find({'users._id': user._id}).toArray((e, r) => {
 				if (e) return reject(e);
@@ -34,7 +34,7 @@ apiChat.getChatList = (opts) => {
 		});
 		userIds = _.uniq(userIds);
 		if (! chatArr.length) return;
-		
+
 		return new Promise ((resolve, reject) => {
 			db.collection('users').find({_id: {$in: userIds}}, {login: 1, dtActive: 1}).toArray((e, r) => {
 				if (e) return reject(e);
@@ -77,7 +77,7 @@ apiChat.getChatList = (opts) => {
 
 			val.users.forEach((u) => {
 				if (
-					user._id.toString() !== u._id.toString() && 
+					user._id.toString() !== u._id.toString() &&
 					userById[u._id.toString()]
 				) {
 					item.users.push(userById[u._id.toString()]);
@@ -258,7 +258,7 @@ apiChat.addChatGroup = (opts) => {
 	if (! opts.users || ! opts.users.length) {
 		return Promise.reject(new Error('Wrong data'));
 	}
-	
+
 	let groupObj = null,
 		user = null;
 	return api.user.checkAuth(opts)
@@ -270,7 +270,7 @@ apiChat.addChatGroup = (opts) => {
 				_id: helper.mongoId(_id)
 			};
 		});
-		
+
 		groupObj = {
 			users: opts.users,
 			creator: user._id,

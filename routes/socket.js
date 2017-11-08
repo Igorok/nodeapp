@@ -1,4 +1,4 @@
-const helper = require(__dirname + '/../bin/helper.js');
+const helper = require(__dirname + '/../api/helper.js');
 let io = require('socket.io');
 
 let api = {};
@@ -38,7 +38,7 @@ let init = (server) => {
 				.then(() => {
 					// to room
 					socket.to(room.roomId.toString()).emit('freshStatus', {
-						roomId: room.roomId, 
+						roomId: room.roomId,
 						users: room.users
 					});
 					// to user
@@ -65,7 +65,7 @@ let init = (server) => {
 				.then(() => {
 					// to room
 					socket.to(room.roomId.toString()).emit('freshStatus', {
-						roomId: room.roomId, 
+						roomId: room.roomId,
 						users: room.users
 					});
 					// to user
@@ -97,7 +97,7 @@ let init = (server) => {
 		console.trace(e);
 	});
 
-	
+
 
 
 
