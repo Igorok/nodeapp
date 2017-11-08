@@ -76,31 +76,30 @@ helper.getConfig()
 			res.status(err.status || 500);
 			res.render('error');
 		});
-		
+
+		let server_port = cfg.app.port;
+		if (process.env.PORT) {
+			server_port = process.env.PORT;
+		} else if (process.env.OPENSHIFT_NODEJS_PORT) {
+			server_port = process.env.OPENSHIFT_NODEJS_PORT;
+		}
+		var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1'
+		app.set('port', server_port);
 
 		/**
-		 * Get port from environment and store in Express.
-		 */
-		let port = process.env.PORT || cfg.app.port;
-		app.set('port', port);
-
-		/**
-		 * Create HTTP server.
-		 */
-
+		* Create HTTP server.
+		*/
 		var server = http.createServer(app);
-
 		/**
-		 * Listen on provided port, on all network interfaces.
-		 */
-
-		server.listen(port);
+		* Listen on provided port, on all network interfaces.
+		*/
+		server.listen(server_port, server_ip_address);
 		server.on('error', onError);
 		server.on('listening', onListening);
 
 		routeSocket(server);
 
-		
+
 		/**
 		 * Event listener for HTTP server "error" event.
 		 */
@@ -141,5 +140,3 @@ helper.getConfig()
 			debug('Listening on ' + bind);
 		}
 	});
-
-
