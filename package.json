@@ -8,7 +8,8 @@
   },
   "subdomain": "igor-ok",
   "scripts": {
-    "start": "node ./app.js"
+    "start": "node ./app.js",
+    "postinstall": "webpack -p --config ./webpack.config.js --progress"
   },
   "main": "app.js",
   "dependencies": {

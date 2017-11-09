@@ -1,5 +1,5 @@
 module.exports = {
-    prod:false,
+    prod:true,
     app: {
         expireTokenDay: 7,
         port: 8080,

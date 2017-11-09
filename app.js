@@ -3,12 +3,6 @@
 /**
  * Module dependencies.
  */
-var webpack = require('webpack');
-var webpackDevMiddleware = require('webpack-dev-middleware');
-var webpackHotMiddleware = require('webpack-hot-middleware');
-var config = require(__dirname + '/webpack.config');
-var compiler = webpack(config);
-
 
 var debug = require('debug')('nodeapp:server');
 var http = require('http');
@@ -25,118 +19,106 @@ let routeSocket = require(__dirname + '/routes/socket.js');
 let helper = require(__dirname + '/api/helper.js');
 
 let cfg = null,
-	db = null,
-	api = {};
+    db = null,
+    api = {};
 
 helper.getConfig()
-	.then((r) => {
-		cfg = r;
-		return helper.getMongo();
-	})
-	.then((_db) => {
-		db = _db;
-		return routeIndex();
-	})
-	.then((rIndex) => {
-		var app = express();
+    .then((r) => {
+        cfg = r;
+        return helper.getMongo();
+    })
+    .then((_db) => {
+        db = _db;
+        return routeIndex();
+    })
+    .then((rIndex) => {
+        var app = express();
+        app.use(logger('dev'));
+        app.use(bodyParser.json());
+        app.use(bodyParser.urlencoded({ extended: false }));
+        app.use(cookieParser());
+        app.set('views', path.join(__dirname, '/views'));
+        app.set('view engine', 'pug');
 
-		// webpack
-		app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: config.output.publicPath }))
-		app.use(webpackHotMiddleware(compiler))
+        app.use(express.static(path.join(__dirname, '/public')));
+        app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+        app.use('/', rIndex);
 
-		// view engine setup
-		app.set('views', path.join(__dirname, '/views'));
-		app.set('view engine', 'pug');
+        // catch 404 and forward to error handler
+        app.use(function(req, res, next) {
+            var err = new Error('Not Found');
+            err.status = 404;
+            next(err);
+        });
 
-		// uncomment after placing your favicon in /public
-		//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-		app.use(logger('dev'));
-		app.use(bodyParser.json());
-		app.use(bodyParser.urlencoded({ extended: false }));
-		app.use(cookieParser());
-		app.use(express.static(path.join(__dirname, '/public')));
+        // error handler
+        app.use(function(err, req, res, next) {
+            // set locals, only providing error in development
+            res.locals.message = err.message;
+            res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-		app.use('/', rIndex);
-		// app.use('/users', users);
+            // render the error page
+            res.status(err.status || 500);
+            res.render('error');
+        });
 
-		// catch 404 and forward to error handler
-		app.use(function(req, res, next) {
-			var err = new Error('Not Found');
-			err.status = 404;
-			next(err);
-		});
+        let server_port = cfg.app.port;
+        if (process.env.PORT) {
+            server_port = process.env.PORT;
+        } else if (process.env.OPENSHIFT_NODEJS_PORT) {
+            server_port = process.env.OPENSHIFT_NODEJS_PORT;
+        }
+        var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1'
+        app.set('port', server_port);
 
-		// error handler
-		app.use(function(err, req, res, next) {
-			// set locals, only providing error in development
-			res.locals.message = err.message;
-			res.locals.error = req.app.get('env') === 'development' ? err : {};
+        /**
+        * Create HTTP server.
+        */
+        var server = http.createServer(app);
+        server.listen(server_port, server_ip_address);
+        server.on('error', onError);
+        server.on('listening', onListening);
 
-			// render the error page
-			res.status(err.status || 500);
-			res.render('error');
-		});
-
-		let server_port = cfg.app.port;
-		if (process.env.PORT) {
-			server_port = process.env.PORT;
-		} else if (process.env.OPENSHIFT_NODEJS_PORT) {
-			server_port = process.env.OPENSHIFT_NODEJS_PORT;
-		}
-		var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1'
-		app.set('port', server_port);
-
-		/**
-		* Create HTTP server.
-		*/
-		var server = http.createServer(app);
-		/**
-		* Listen on provided port, on all network interfaces.
-		*/
-		server.listen(server_port, server_ip_address);
-		server.on('error', onError);
-		server.on('listening', onListening);
-
-		routeSocket(server);
+        routeSocket(server);
 
 
-		/**
-		 * Event listener for HTTP server "error" event.
-		 */
+        /**
+         * Event listener for HTTP server "error" event.
+         */
 
-		function onError(error) {
-			if (error.syscall !== 'listen') {
-				throw error;
-			}
+        function onError(error) {
+            if (error.syscall !== 'listen') {
+                throw error;
+            }
 
-			var bind = typeof port === 'string'
-				? 'Pipe ' + port
-				: 'Port ' + port;
+            var bind = typeof port === 'string'
+                ? 'Pipe ' + port
+                : 'Port ' + port;
 
-			// handle specific listen errors with friendly messages
-			switch (error.code) {
-				case 'EACCES':
-					console.error(bind + ' requires elevated privileges');
-					process.exit(1);
-					break;
-				case 'EADDRINUSE':
-					console.error(bind + ' is already in use');
-					process.exit(1);
-					break;
-				default:
-					throw error;
-			}
-		}
+            // handle specific listen errors with friendly messages
+            switch (error.code) {
+                case 'EACCES':
+                    console.error(bind + ' requires elevated privileges');
+                    process.exit(1);
+                    break;
+                case 'EADDRINUSE':
+                    console.error(bind + ' is already in use');
+                    process.exit(1);
+                    break;
+                default:
+                    throw error;
+            }
+        }
 
-		/**
-		 * Event listener for HTTP server "listening" event.
-		 */
+        /**
+         * Event listener for HTTP server "listening" event.
+         */
 
-		function onListening() {
-			var addr = server.address();
-			var bind = typeof addr === 'string'
-				? 'pipe ' + addr
-				: 'port ' + addr.port;
-			debug('Listening on ' + bind);
-		}
-	});
+        function onListening() {
+            var addr = server.address();
+            var bind = typeof addr === 'string'
+                ? 'pipe ' + addr
+                : 'port ' + addr.port;
+            debug('Listening on ' + bind);
+        }
+    });
