@@ -81,7 +81,7 @@ helper.getConfig()
         * Create HTTP server.
         */
         var server = http.createServer(app);
-        server.listen(server_port, server_ip_address);
+        server.listen(server_port);
         server.on('error', onError);
         server.on('listening', onListening);
 
