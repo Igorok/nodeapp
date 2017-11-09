@@ -69,6 +69,12 @@ helper.getConfig()
             server_port = process.env.OPENSHIFT_NODEJS_PORT;
         }
         var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1'
+
+        console.log(
+            'server_port ', server_port,
+            'server_ip_address ', server_ip_address
+        );
+
         app.set('port', server_port);
 
         /**
