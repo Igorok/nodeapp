@@ -12,7 +12,7 @@ import Blog from './BlogComp'
 // post list widget
 class PostListItem extends React.Component {
 	render () {
-		let postLink = '/my-post-detail/' + this.props.item._id;
+		let postLink = `/my-post-detail/${this.props.blogId}/${this.props.item._id}`;
 		return <div className="col-md-4">
 			<div className="panel panel-default">
 				<div className="panel-heading">
@@ -66,7 +66,7 @@ class PostList extends React.Component {
 
 		if (this.props.postList.list && this.props.postList.list.length) {
 			postList = this.props.postList.list.map((val) => {
-				return <PostListItem key={val._id} item={val} />
+				return <PostListItem key={val._id} item={val} blogId={this.props.postList.blogId} />
 			});
 		}
 

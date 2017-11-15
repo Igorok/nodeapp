@@ -174,6 +174,7 @@ class Blog extends React.Component {
 			}
 		}
 
+        let newLink = `/my-post-detail/${this.props.blogDetail.blogId}/-1`
 		return <div>
 			<ol className="breadcrumb">
 				<li>
@@ -205,6 +206,11 @@ class Blog extends React.Component {
 						<span className='glyphicon glyphicon-pencil'></span>&nbsp;
 						Edit
 					</button>
+                    &nbsp;
+                    <a className='btn btn-default' href={newLink}>
+						<span className='glyphicon glyphicon-plus'></span>&nbsp;
+						Add post
+					</a>
 				</div>
 			</div>
 			<Modal blogDetail={this.props.blogDetail} dispatch={this.props.dispatch} />

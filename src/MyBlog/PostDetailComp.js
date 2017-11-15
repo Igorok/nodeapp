@@ -9,6 +9,7 @@ class PostDetailComp extends React.Component {
         super(props);
         this.state = {
             _id: this.props.postDetail._id,
+            _bId: this.props.postDetail._bId,
             name: this.props.postDetail.name,
             description: this.props.postDetail.description,
             status: this.props.postDetail.status,
@@ -35,6 +36,7 @@ class PostDetailComp extends React.Component {
             type: 'POST_EDIT',
             fetch: 'blog.editMyPostDetail',
             _id: this.state._id,
+            _bId: this.state._bId,
             status: this.state.status,
             name: this.state.name,
             description: this.state.description,
@@ -45,15 +47,15 @@ class PostDetailComp extends React.Component {
         this.props.dispatch(api({
             type: 'POST_DETAIL',
             fetch: 'blog.getMyPostDetail',
-            _id: this.props.postDetail.postId
+            _id: this.props.postDetail._id,
+            _bId: this.state._bId,
         }));
     }
     componentWillReceiveProps (newProps) {
         this.setState({
-            _id: newProps.postDetail._id,
-            name: newProps.postDetail.name,
-            description: newProps.postDetail.description,
-            status: newProps.postDetail.status,
+            name: newProps.postDetail.name || '',
+            description: newProps.postDetail.description || '',
+            status: newProps.postDetail.status || 'write',
         });
     }
 

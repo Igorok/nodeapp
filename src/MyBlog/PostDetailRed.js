@@ -1,16 +1,17 @@
 let postId = window.locals.postId || null;
+let _bId = window.locals.blogId || null;
+
 let initState = {
 	fetch_status: null,
 	fetch_error: null,
-	postId: postId,
-	_bId: '',
+	_bId: _bId,
 	created: '',
 	user: '',
 	name: '',
 	blogName: '',
 	description: '',
 	status: '',
-	_id: '',
+	_id: postId,
 };
 
 const postDetail = (state = initState, action) => {
@@ -22,8 +23,6 @@ const postDetail = (state = initState, action) => {
 			return state;
 		case 'POST_DETAIL_SUCCESS':
 			state = {...state};
-			state._id = action.data._id;
-			state._bId = action.data._bId;
 			state.created = action.data.created;
 			state.user = action.data.user;
 			state.name = action.data.name;
