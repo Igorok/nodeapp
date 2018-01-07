@@ -8,23 +8,6 @@ let cfg = null,
     apiBlog = {},
     api = {};
 
-// validation start
-
-
-
-// validation end
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 apiBlog.getBlogList = (opts) => {
@@ -124,7 +107,7 @@ apiBlog.getBlogPosts = (opts) => {
         return new Promise((resolve, reject) => {
             let q = {
                 _bId: opts._id,
-                approved: 1,
+                // approved: 1,
                 status: "publish",
             };
             let rows = {
@@ -184,7 +167,7 @@ apiBlog.getPostDetail = (opts) => {
     return new Promise((resolve, reject) => {
         let q = {
             _id: opts._id,
-            approved: 1,
+            // approved: 1,
             status: 'publish',
         };
 
@@ -353,7 +336,7 @@ apiBlog.getMyPostDetail = (opts) => {
     }
     opts._id = opts._id.toString();
     opts._bId = opts._bId.toString();
-    
+
 
     return api.user.checkAuth(opts)
     .then((u) => {
@@ -474,7 +457,35 @@ apiBlog.addMyPostDetail = (opts) => {
 };
 
 
-
+apiBlog.removePost = (opts) => {
+    let user = null;
+    if (! opts._id) {
+        return Promise.reject(new Error('Post not found'));
+    }
+    let q = {
+        _id: helper.mongoId(opts._id),
+    };
+    return api.user.checkAuth(opts)
+    .then((u) => {
+        user = u;
+        q.uId = user._id;
+        return new Promise((resolve, reject) => {
+            db.collection('posts').findOne(q, (e, r) => {
+                if (e) return reject(e);
+                if (! r) return reject(new Error('Post not found'));
+                resolve();
+            });
+        });
+    })
+    .then(() => {
+        return new Promise((resolve, reject) => {
+            db.collection('posts').removeOne(q, (e, r) => {
+                if (e) return reject(e);
+                resolve({_id: opts._id});
+            });
+        });
+    });
+};
 
 
 

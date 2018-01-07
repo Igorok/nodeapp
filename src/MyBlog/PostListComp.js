@@ -11,6 +11,13 @@ import Blog from './BlogComp'
 
 // post list widget
 class PostListItem extends React.Component {
+	constructor(props) {
+		super(props);
+	}
+	removePost (e) {
+		e.preventDefault();
+		this.props.removePost(this.props.item._id);
+	}
 	render () {
 		let postLink = `/my-post-detail/${this.props.blogId}/${this.props.item._id}`;
 		return <div className="col-md-4">
@@ -31,8 +38,12 @@ class PostListItem extends React.Component {
 					</p>
 					<p>
 						<span className='glyphicon glyphicon-time'></span>&nbsp;&nbsp;
-						Created: {this.props.item.created}&nbsp;&nbsp;
-						Updated: {this.props.item.updated}&nbsp;&nbsp;
+						Created: {this.props.item.created}<br />
+						Updated: {this.props.item.updated}<br />
+						<button className="btn btn-danger btn-xs" type="button" onClick={::this.removePost}>
+							<span className='glyphicon glyphicon-trash'></span>
+						</button> Remove
+
 					</p>
 				</div>
 			</div>
@@ -48,14 +59,22 @@ class PostList extends React.Component {
 			_id: this.props.postList.blogId
 		}));
 	}
+
+	removePost (_id) {
+		this.props.dispatch(api({
+			type: 'POST_REMOVE',
+			fetch: 'blog.removePost',
+			_id: _id,
+		}));
+	}
 	render () {
 		let alertOpts = null,
 			postList = null;
-		
+
 		if (this.props.postList.fetch_status === 'error') {
 			alertOpts = {
 				className: 'danger',
-				text: this.props.fetch_error
+				text: this.props.postList.fetch_error
 			}
 		} else if (this.props.postList.fetch_status === 'send') {
 			alertOpts = {
@@ -66,7 +85,12 @@ class PostList extends React.Component {
 
 		if (this.props.postList.list && this.props.postList.list.length) {
 			postList = this.props.postList.list.map((val) => {
-				return <PostListItem key={val._id} item={val} blogId={this.props.postList.blogId} />
+				return <PostListItem
+					key={val._id}
+					item={val}
+					blogId={this.props.postList.blogId}
+					removePost={::this.removePost}
+				/>
 			});
 		}
 
@@ -76,7 +100,7 @@ class PostList extends React.Component {
 				{postList}
 			</div>
 		</div>
-		
+
 	}
 }
 const postStateToProps = (state) => {

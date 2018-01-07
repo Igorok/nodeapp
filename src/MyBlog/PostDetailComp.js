@@ -62,7 +62,7 @@ class PostDetailComp extends React.Component {
     render () {
         let alertOpts = null,
             blogLink = '/my-blog-detail/' + this.props.postDetail._bId;
-        
+
 
         if (
             this.props.postDetail.fetch_status === 'error' ||
@@ -86,7 +86,7 @@ class PostDetailComp extends React.Component {
                 text: 'Updated successfully!',
             }
         }
-        
+
         return <div >
             <ol className="breadcrumb">
                 <li>
@@ -114,15 +114,15 @@ class PostDetailComp extends React.Component {
                 <div className="panel-body">
                     <form onSubmit={::this.formSubmit}>
                         <div className="modal-body">
-                            
+
 
                             <div className="form-group">
                                 <label htmlFor="name">Name</label>
-                                <input 
-                                    type="text" 
-                                    className="form-control" 
-                                    id="name" 
-                                    placeholder="Name" 
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    id="name"
+                                    placeholder="Name"
                                     onChange={::this.fieldChange}
                                     value={this.state.name}
                                 />
@@ -131,14 +131,14 @@ class PostDetailComp extends React.Component {
                                 <label htmlFor="status">Status</label>
                             </div>
                             <div className="form-group">
-                                <select 
+                                <select
                                     id = 'status'
-                                    className="form-control" 
+                                    className="form-control"
                                     value = {this.state.status}
                                     onChange = {::this.fieldChange}
                                 >
                                     {this.statArr.map((v) => {
-                                        return <option 
+                                        return <option
                                             value = {v.key}
                                             key = {v.key}
                                         >
@@ -147,12 +147,12 @@ class PostDetailComp extends React.Component {
                                     })}
                                 </select>
                             </div>
-                            
+
                             <div className="form-group">
                                 <label >Description</label>
-                                <TextEditor 
-                                    description={this.state.description} 
-                                    cb={::this.setDescription} 
+                                <TextEditor
+                                    description={this.state.description}
+                                    cb={::this.setDescription}
                                 />
                             </div>
 
