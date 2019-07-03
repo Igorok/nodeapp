@@ -1,4 +1,3 @@
-const moment = require('moment');
 const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
@@ -13,7 +12,7 @@ let cfg = null,
 let getConfig = () => {
 	if (cfg) return Promise.resolve(cfg);
 
-	let arr = [cfgFile, 'local-' + cfgFile];
+	let arr = [cfgFile, 'local-' + cfgFile, 'test-' + cfgFile];
 	let cfgArr = [];
 	arr = arr.map((f) => {
 		return () => {
@@ -35,7 +34,7 @@ let getConfig = () => {
 	});
 	return arr.reduce((p, f) => p.then(f), Promise.resolve())
 		.then(() => {
-			cfg = _.merge.apply(null, cfgArr);
+            cfg = _.merge.apply(null, cfgArr);
 			if (process.env.MONGOHOST) {
 				cfg.mongo.auth = true;
 				cfg.mongo.host = process.env.MONGOHOST.toString();

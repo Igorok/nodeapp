@@ -1,6 +1,6 @@
 const fs = require('fs');
 const server = require(__dirname + '/../../server.js');
-let httpServer = null;
+const helperApi = require(__dirname + '/../../api/helper.js');
 
 const cfgStr = `module.exports = {
         prod:false,
@@ -24,7 +24,7 @@ const cfgStr = `module.exports = {
 
 module.exports.writeConfig = () => {
     return new Promise((resolve, reject) => {
-        fs.writeFile(__dirname + '/../../local-config.js', cfgStr, 'utf8', (e, r) => {
+        fs.writeFile(__dirname + '/../../test-config.js', cfgStr, 'utf8', (e, r) => {
             if (e) {
                 return reject(e);
             }
@@ -35,7 +35,7 @@ module.exports.writeConfig = () => {
 
 module.exports.unlinkConfig = () => {
     return new Promise((resolve, reject) => {
-        fs.unlink(__dirname + '/../../local-config.js', (e, r) => {
+        fs.unlink(__dirname + '/../../test-config.js', (e, r) => {
             if (e) {
                 return reject(e);
             }
@@ -46,4 +46,9 @@ module.exports.unlinkConfig = () => {
 
 module.exports.launchServer = async () => {
     return await server.launch();
+};
+
+module.exports.dropTestDataBase = async () => {
+    let db = await helperApi.getMongo();
+    return await db.dropDatabase();
 };
