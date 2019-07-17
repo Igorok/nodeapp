@@ -14,6 +14,7 @@ var bodyParser = require('body-parser');
 
 let routeIndex = require(__dirname + '/routes/index.js');
 let routeSocket = require(__dirname + '/routes/socket.js');
+let routeTest = require(__dirname + '/routes/test.js');
 
 let helper = require(__dirname + '/api/helper.js');
 
@@ -41,6 +42,7 @@ module.exports.launch =  () => {
             app.use(express.static(path.join(__dirname, '/public')));
             app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
             app.use('/', rIndex);
+            app.use('/test', routeTest);
 
             // catch 404 and forward to error handler
             app.use(function(req, res, next) {

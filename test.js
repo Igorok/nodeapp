@@ -352,3 +352,88 @@ const convert = (obj) => {
 }
 // console.log('convert', convert(objConv));
 
+let queList = []
+for (let i = 0; i < 100; i++) {
+    queList.push('Async text ' + i);
+}
+
+class AsyncQueue {
+    constructor (props) {
+        // params
+        this.list = props.list || [];
+        this.limit = props.limit;
+        this.callback = props.callback;
+
+        this.i = 0;
+        this.queueSize = 0;
+        this.results = [];
+    }
+
+    process (i) {
+        if (i >= this.list.length) {
+            return;
+        }
+        console.log('process', i, 'this.queueSize', this.queueSize);
+
+        this.queueSize = this.queueSize + 1;
+
+        new Promise((resolve, reject) => {
+            let val = this.list[i];
+            let t = Math.round(Math.random() * Math.random() * 10000);
+
+            setTimeout(() => {
+                console.log('processed i...' , i);
+
+                resolve(i + ' time ' + t + ' ' + val);
+            }, t);
+        }).then((r) => {
+            this.results[i] = r;
+            this.queueSize = this.queueSize - 1;
+
+            console.log('finish', i, 'this.queueSize', this.queueSize);
+
+            if (this.queueSize == 0 && this.i >= this.list.length - 1) {
+                return this.callback(this.results);
+            } else if (this.queueSize < this.limit && i < this.list.length) {
+                this.i = this.i + 1;
+                return this.process(this.i);
+            }
+        });
+    }
+
+    launch () {
+        while (this.queueSize < this.limit) {
+            this.process(this.i);
+            if (this.i < this.limit - 1) {
+                this.i = this.i + 1;
+            }
+        }
+    }
+
+
+
+    push (val) {
+        this.list.push(val);
+
+        this.process(this.i);
+        this.i = this.i + 1;
+    }
+
+}
+
+let p = {
+    list: queList,
+    limit: 10,
+    callback: function (r) {
+        console.log('result', r);
+    }
+};
+
+let asyncQueue = new AsyncQueue(p);
+asyncQueue.launch();
+
+
+// for (let i = 0; i < 20; i++) {
+//     console.log(i);
+//     asyncQueue.push('new async text ' + (100 + i));
+// }

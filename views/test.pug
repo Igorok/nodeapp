@@ -1,0 +1,17 @@
+extends layout
+block content
+    h1 Test page
+
+    form(action="/test/jwtlogin" method="post")
+        input( type="text" name="login" placeholder="Login" )
+        br
+        input(type="text" name="password" placeholder="Password" )
+        br
+        button(type="submit") Login
+
+    form(action="/test/jwtcheck" method="post")
+        input( type="text" name="login" placeholder="Login")
+        br
+        input(type="text" name="token" placeholder="token" )
+        br
+        button(type="submit") Check
