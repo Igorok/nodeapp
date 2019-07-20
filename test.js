@@ -429,11 +429,124 @@ let p = {
     }
 };
 
-let asyncQueue = new AsyncQueue(p);
-asyncQueue.launch();
+// let asyncQueue = new AsyncQueue(p);
+// asyncQueue.launch();
 
 
 // for (let i = 0; i < 20; i++) {
 //     console.log(i);
 //     asyncQueue.push('new async text ' + (100 + i));
 // }
+
+
+/*
+console.log (device.encode ('What is this ?')) ;
+device.decode = function (w) {
+    return w ;
+}
+
+Test.assertEquals (
+    device.decode ('yFNYhdmEdViBbxc40,ROYNxwfwvjg5CHUYUhiIkp2CMIvZ.1qPz'),
+    'The quick brown fox jumped over the lazy developer.'
+) ;
+
+console.log (device.encode ('What is this ?')) ;
+EFhZINtl3rgKW9
+
+*/
+
+
+/*
+You are organizing a soccer tournament, so you need to build a matches table.
+
+The tournament is composed by 20 teams. It is a round-robin tournament (all-play-all), so it has 19 rounds, and each team plays once per round. Each team confront the others once in the tournament (each match does not repeat in the tournament).
+
+Your mission is to implement a function "buildMatchesTable" that receives the number of teams (always a positive and even number) and returns a matrix. Each line of the matrix represents one round. Each column of the matrix represents one match. The match is represented as an array with two teams. Each team is represented as a number, starting from 1 until the number of teams.
+
+Example:
+
+buildMatchesTable(4)
+
+function buildMatchesTable(numberOfTeams) {
+
+}
+
+
+Round 1. (1 plays 14, 2 plays 13, ... )
+1	2	3	4	5	6	7
+14	13	12	11	10	9	8
+
+Round 2. (1 plays 13, 14 plays 12, ... )
+1	14	2	3	4	5	6
+13	12	11	10	9	8	7
+
+Round 3. (1 plays 12, 13 plays 11, ... )
+1	13	14	2	3	4	5
+12	11	10	9	8	7	6
+
+Round 13. (1 plays 2, 3 plays 14, ... )
+1	3	4	5	6	7	8
+2	14	13	12	11	10	9
+
+*/
+
+
+class RoundRobin {
+    constructor (props) {
+        // generate teams
+        this.teamsList = [];
+        for (let i = 1; i <= props.count; i++) {
+            this.teamsList.push(i);
+        }
+    }
+    getRound () {
+        let half = this.teamsList.length / 2;
+        let first = this.teamsList.slice(0, half);
+        let second = this.teamsList.slice(half, this.teamsList.length).reverse();
+
+        let round = [];
+        for (let i = 0; i < first.length; i++) {
+            round.push([first[i], second[i]]);
+        }
+        return round;
+    }
+    move () {
+        // logic for round robin changes
+        const last = this.teamsList[this.teamsList.length - 1];
+        for (let i = this.teamsList.length - 1; i > 0; i--) {
+            this.teamsList[i] = this.teamsList[i - 1];
+            if (i == 1) {
+                this.teamsList[i] = last;
+            }
+        }
+    }
+    getTournament () {
+        let tournament = [];
+        for (let i = 0; i < this.teamsList.length - 1; i++) {
+            tournament.push(this.getRound());
+            this.move();
+        }
+        return tournament;
+    }
+}
+
+function buildMatchesTable(numberOfTeams) {
+    const rrobin = new RoundRobin({count: numberOfTeams});
+    return rrobin.getTournament();
+}
+console.log(buildMatchesTable(8))
+
+/*
+
+[ [ [ 1, 5 ], [ 2, 6 ], [ 3, 7 ], [ 4, 8 ] ],
+  [ [ 1, 4 ], [ 8, 5 ], [ 2, 6 ], [ 3, 7 ] ],
+  [ [ 1, 3 ], [ 7, 4 ], [ 8, 5 ], [ 2, 6 ] ],
+  [ [ 1, 2 ], [ 6, 3 ], [ 7, 4 ], [ 8, 5 ] ],
+  [ [ 1, 8 ], [ 5, 2 ], [ 6, 3 ], [ 7, 4 ] ],
+  [ [ 1, 7 ], [ 4, 8 ], [ 5, 2 ], [ 6, 3 ] ],
+  [ [ 1, 6 ], [ 3, 7 ], [ 4, 8 ], [ 5, 2 ] ] ]
+
+The matches 2 vs 6, 3 vs 7, 5 vs 8, 2 vs 6, 4 vs 7, 5 vs 8, 3 vs 6, 4 vs 7, 4 vs 8, 2 vs 5, 3 vs 6, 3 vs 7, 4 vs 8, 2 vs 5 are repeated in the tournament
+
+
+*/
