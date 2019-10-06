@@ -25,12 +25,12 @@ CMD ["npm", "start"]
 
 
 # docker build --build-arg <build arguments> -t <user-name>/<image-name>:<tag-name> /path/to/Dockerfile
-# docker build --build-arg APP_DIR=var/app -t dns/nodeapp:v1 .
+# docker build --build-arg APP_DIR=var/app -t igordubinin/nodeapp:v1 .
 
 # docker images
 
 # docker run -p <External-port:exposed-port> -d --name <name of the container> <user-name>/<image-name>:<tag-name>
-# docker run -p 8080:8080 -d --name nodeapp dns/nodeapp:v1
+# docker run -p 3000:8080 -d --name nodeapp igordubinin/nodeapp:v1
 
 
 # docker ps -a
@@ -38,6 +38,13 @@ CMD ["npm", "start"]
 # docker images
 # docker rmi ***
 # sudo docker logs ***
+
+# docker image ls
+# docker container ls --all
+
+
+
+
 
 
 # Install kubectl binary with curl on Linux
