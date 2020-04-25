@@ -195,7 +195,7 @@ const bubbleSort = (arr) => {
     return arr;
 }
 
-// console.log('bubbleSort', bubbleSort(bublArray));
+console.log('bubbleSort', bubbleSort(bublArray));
 /*
 сортировка выбором
 находит самый большой элемент и помещает в конец массива
@@ -550,3 +550,88 @@ The matches 2 vs 6, 3 vs 7, 5 vs 8, 2 vs 6, 4 vs 7, 5 vs 8, 3 vs 6, 4 vs 7, 4 vs
 
 
 */
+
+
+const objConv = {
+    "a": {
+        "a1": 'qwe',
+        "a2": {
+            'a21': 1,
+            'a22': {
+                'a3': 3
+            }
+        }
+    },
+    'b': {
+        'b1': 1,
+        'b2': {
+            'b3': 3,
+            'b4': 4
+        }
+    }
+};
+
+const convert = (objConv) => {
+    const newObj = {};
+
+    const process = (obj, path) => {
+        Object.keys(obj).forEach((key) => {
+            let newpath = path;
+            if (newpath.length) {
+                newpath = newpath + '.' + key;
+            } else {
+                newpath = key;
+            }
+
+            if (typeof obj[key] === 'object') {
+                process(obj[key], newpath);
+            } else {
+                newObj[newpath] = obj[key];
+            }
+        });
+    }
+
+    process(objConv, '');
+    return newObj;
+};
+console.log(convert(objConv));
+
+const obj = {
+    'a.a1': 'qwe',
+    'a.a2.a21': 1,
+    'a.a2.a22.a3': 3,
+    'b.b1': 1,
+    'b.b2.b3': 3,
+    'b.b2.b4': 4
+};
+
+const convert = (obj) => {
+    const newObj = {};
+    Object.keys(obj).forEach(key => {
+        const arr = key.split('.');
+        let link = newObj;
+        for (let i = 0; i < arr.length; i++) {
+            if (! link[arr[i]]) {
+                link[arr[i]] = {};
+            }
+            if (i === arr.length - 1) {
+                link[arr[i]] = obj[key];
+            } else {
+                link = link[arr[i]];
+            }
+        }
+    });
+    return newObj;
+};
+console.log(convert(obj));
+
+
+
+
+
+
+createPhoneNumber([1, 2, 3, 4, 5, 6, 7, 8, 9, 0]) // => returns "(123) 456-7890"
+function createPhoneNumber(numbers){
+    return `(${numbers.slice(0, 3).join('')}) ${numbers.slice(3, 6).join('')}-${numbers.slice(6, 9).join('')}`;
+}
+console.log(createPhoneNumber([1, 2, 3, 4, 5, 6, 7, 8, 9, 0]));
