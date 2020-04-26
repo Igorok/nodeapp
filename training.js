@@ -225,3 +225,59 @@ worker();
 
 
 
+/*
+В программировании рекурсия — вызов функции (процедуры) из неё же самой, непосредственно (простая рекурсия) или через другие функции (сложная или косвенная рекурсия),
+*/
+
+const reduceObj = {
+    a: {
+        a1: 'qwe',
+        a2: {
+            a21: 1,
+            a22: {
+                a3: 3
+            }
+        }
+    },
+    b: {
+        b1: 1,
+        b2: {
+            b3: 3,
+            b4: 4
+        }
+    }
+}
+
+const reduceKeys = (obj) => {
+    const newObj = {};
+    const reduceFn = (key, value) => {
+        if (typeof value !== 'object') {
+            newObj[key] = value;
+            return;
+        }
+
+        if (key != '') {
+            key += '.';
+        }
+
+        for (k in value) {
+            reduceFn(key + k, value[k]);
+        }
+    };
+
+    reduceFn('', obj);
+
+    return newObj;
+};
+
+/*
+reduceKeys(reduceObj) {
+    'a.a1': 'qwe',
+    'a.a2.a21': 1,
+    'a.a2.a22.a3': 3,
+    'b.b1': 1,
+    'b.b2.b3': 3,
+    'b.b2.b4': 4
+}
+console.log('reduceKeys(reduceObj)', reduceKeys(reduceObj));
+*/
