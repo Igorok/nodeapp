@@ -1,11 +1,12 @@
 // fibonacci
 const fibonacci = (arr, n) => {
-    for (let i = 1; i <= n; i++) {
+    for (let i = 1; i < n; i++) {
         arr[i + 1] = arr[i - 1] + arr[i];
     }
-    return arr;
+    return arr[n];
 };
-// fibonacci([0,1], 5);
+// fibonacci([0,1], 20);
+// console.log('fibonacci([0,1], 20)', fibonacci([0,1], 20));
 
 const sortArray = [54,26,93,17,77,31,44,55,20, 94, 94];
 
