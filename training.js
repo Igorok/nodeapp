@@ -282,3 +282,75 @@ reduceKeys(reduceObj) {
 }
 console.log('reduceKeys(reduceObj)', reduceKeys(reduceObj));
 */
+
+// parallel worker
+
+const worker = async (fn, arr, num) => {
+    let launched = -1;
+    let finished = -1;
+    let active = 0;
+    const result = new Array(arr.length);
+
+    return new Promise((res) => {
+        const start = async () => {
+            console.log('start');
+            while (active < num && launched < arr.length) {
+                process();
+            }
+        };
+
+        const process = async () => {
+            launched = launched + 1;
+            if (launched >= arr.length) {
+                return;
+            }
+            console.log('launched', launched);
+
+            active = active + 1;
+            result[launched] = await fn(arr[launched]);
+
+            active = active - 1;
+            finished = finished + 1;
+
+            console.log('finished', finished);
+
+            if (finished === arr.length - 1) {
+                res(result);
+            } else {
+                start();
+            }
+        };
+
+        start();
+    });
+}
+
+const arr = [];
+for (let i = 0; i < 50; i++) {
+    arr.push(i);
+}
+const fn = async (i) => {
+    return new Promise((res, rej) => {
+        console.log(i, 1, 'fn');
+        const t = Math.round(Math.random() * 10);
+
+        console.log(i, 2, 'fn');
+        setTimeout(() => {
+            const v = 'processed ' + i;
+
+            console.log(i, 4, 'fn');
+
+            res(v);
+        }, t * 1000);
+
+        console.log(i, 3, 'fn');
+
+    });
+};
+
+const checkParallel = async () => {
+    const r = await worker(fn, arr, 5);
+    console.log('worker', r);
+};
+
+checkParallel();
