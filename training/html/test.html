@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    </head>
+
+    <body>
+        <input type="search" onchange="inputOnChange(this)" />
+        для поиска
+        <br />
+        <input type="number" onchange="inputOnChange(this)" />
+        для ввода чисел
+        <br />
+        <input type="range" onchange="inputOnChange(this)" />
+        ползунок
+        <br />
+        <input type="color" onchange="inputOnChange(this)" />
+        для выбора цвета
+        <br />
+        <input type="tel" onchange="inputOnChange(this)" />
+        для телефонного номера
+        <br />
+        <input type="url" onchange="inputOnChange(this)" />
+        для веб-адресов
+        <br />
+        <input type="email" onchange="inputOnChange(this)" />
+        для почтовых адресов
+        <br />
+        <input type="date" onchange="inputOnChange(this)" />
+        для выбора календарной даты
+        <br />
+        <input type="month" onchange="inputOnChange(this)" />
+        для месяца
+        <br />
+        <input type="week" onchange="inputOnChange(this)" />
+        для недели
+        <br />
+        <input type="time" onchange="inputOnChange(this)" />
+        для времени
+        <br />
+        <input type="datetime" onchange="inputOnChange(this)" />
+        для указания даты и времени
+        <br />
+        <input type="datetime-local" onchange="inputOnChange(this)" />
+        для местной даты и времени
+        <br />
+
+        <!-- slider -->
+        <br />
+        <hr />
+        <input type="radio" name="toggle" value="1" id="toggle-1">
+        <label for="toggle-1" class="btn-toggle">
+            Radio 1
+        </label>
+
+        <input type="radio" name="toggle" value="2" id="toggle-2">
+        <label for="toggle-2" class="btn-toggle">
+            Radio 2
+        </label>
+
+        <input type="radio" name="toggle" value="3" id="toggle-3">
+        <label for="toggle-3" class="btn-toggle">
+            Radio 3
+        </label>
+
+        <div class="slide" id="slide-1"></div>
+        <div class="slide" id="slide-2"></div>
+        <div class="slide" id="slide-3"></div>
+
+        <style media="screen">
+            .btn-toggle {
+                padding: 10px 20px;
+                border: 1px solid green;
+                border-radius: 5px;
+                display: inline-block;
+                margin-bottom: 20px;
+                cursor: pointer;
+                color: green;
+            }
+            .btn-toggle[for$="-2"] {
+                color: blue;
+                border-color: blue;
+            }
+            .btn-toggle[for$="-3"] {
+                color: red;
+                border-color: red;
+            }
+            .slide {
+                height: 0;
+                width: 0;
+                background: green;
+                opacity: 0;
+                transition: opacity 1s, width 1s;
+            }
+            #slide-2 {
+                background: blue;
+            }
+            #slide-3 {
+                background: red;
+            }
+            input[name="toggle"] {
+                display: none;
+            }
+
+            input[id$="-1"]:checked ~ div[id$="-1"] {
+                opacity: 1;
+                width: 300px;
+                height: 100px;
+            }
+            input[id$="-2"]:checked ~ div[id$="-2"] {
+                opacity: 1;
+                width: 300px;
+                height: 100px;
+            }
+            input[id$="-3"]:checked ~ div[id$="-3"] {
+                opacity: 1;
+                width: 300px;
+                height: 100px;
+            }
+
+            input[id$="-1"]:checked ~ label[for$="-1"] {
+                color: white;
+                background: green;
+            }
+            input[id$="-2"]:checked ~ label[for$="-2"] {
+                color: white;
+                background: blue;
+            }
+            input[id$="-3"]:checked ~ label[for$="-3"] {
+                color: white;
+                background: red;
+            }
+
+            input[name="toggle"]:hover ~ div[id^="slide"] {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+
+            #toggle-1:hover ~ #slide-1 {
+                opacity: 1;
+                width: 300px;
+                height: 100px;
+            }
+            #toggle-2:hover ~ #slide-2 {
+                opacity: 1;
+                width: 300px;
+                height: 100px;
+            }
+            #toggle-3:hover ~ #slide-3 {
+                opacity: 1;
+                width: 300px;
+                height: 100px;
+            }
+        </style>
+
+        <br />
+        <!-- slider -->
+        
+
+
+
+        <script>
+            const inputOnChange = (e) => {
+                console.log('e', e.value, e.type);
+            };
+
+        </script>
+    </body>
+</html>
