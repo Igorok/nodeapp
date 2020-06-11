@@ -156,10 +156,162 @@
         </style>
 
         <br />
-        <!-- slider -->
-        
+        <!-- slider end -->
 
 
+        <!-- align -->
+        <!-- -->
+        <h3>1. Display table-cell</h3>
+        <style>
+            div[class^="parent-center"] {
+                width: 200px;
+                height: 200px;
+                background: red;
+            }
+            div[class^="child-center"] {
+                width: 75px;
+                height: 75px;
+                background: white;
+            }
+        </style>
+
+        <div class="parent-center-1">
+            <div class="child-center-1">
+                some content
+            </div>
+        </div>
+        <style>
+            .parent-center-1 {
+                display: table-cell;
+                vertical-align: middle;
+            }
+            .child-center-1 {
+                margin: 0 auto;
+            }
+        </style>
+
+        <!-- -->
+        <h3>2. line height</h3>
+        <div class="parent-center-2">
+            <div class="child-center-2">
+                some content
+            </div>
+        </div>
+        <style>
+            .parent-center-2 {
+                line-height: 200px;
+                text-align: center;
+            }
+            .child-center-2 {
+                line-height: normal;
+                display: inline-block;
+                vertical-align: middle;
+            }
+        </style>
+
+        <!-- -->
+        <h3>3. position absolute + margin auto</h3>
+        <div class="parent-center-3">
+            <div class="child-center-3">
+                some content
+            </div>
+        </div>
+        <style>
+            .parent-center-3 {
+                position: relative;
+            }
+            .child-center-3 {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                margin: auto;
+            }
+        </style>
+
+        <!-- -->
+        <h3>4. position absolute + negative margin</h3>
+        <div class="parent-center-4">
+            <div class="child-center-4">
+                some content
+            </div>
+        </div>
+        <style>
+            .parent-center-4 {
+                position: relative;
+            }
+            .child-center-4 {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                margin-left: -37px;
+                margin-top: -37px;
+            }
+        </style>
+
+        <!-- -->
+        <h3>5. position absolute + transform</h3>
+        <div class="parent-center-5">
+            <div class="child-center-5">
+                some content
+            </div>
+        </div>
+        <style>
+            .parent-center-5 {
+                position: relative;
+            }
+            .child-center-5 {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+        </style>
+
+        <!-- -->
+        <h3>6. :after</h3>
+        <div class="parent-center-6">
+            <div class="child-center-6">
+                some content
+            </div>
+        </div>
+        <style>
+            .parent-center-6 {
+                text-align: center;
+            }
+            .parent-center-6:after {
+                content: '';
+                vertical-align: middle;
+                display: inline-block;
+                height: 100%;
+            }
+            .child-center-6 {
+                display: inline-block;
+                vertical-align: middle;
+            }
+        </style>
+
+        <!-- -->
+        <h3>7. flex</h3>
+        <div class="parent-center-6">
+            <div class="child-center-6">
+                some content
+            </div>
+        </div>
+        <style>
+            .parent-center-6 {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+        </style>
+
+
+
+        <!-- align end -->
+
+        <br /><br /><br /><br />
 
         <script>
             const inputOnChange = (e) => {
