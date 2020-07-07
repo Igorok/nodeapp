@@ -44,3 +44,12 @@ setTimeout(() => {
         console.trace(e);
     }
 }, 4000);
+
+// prototype
+const admin = {
+    name: 'Admin',
+    surname: 'Superuser',
+    __proto__: user,
+};
+
+console.log(admin.getText('Extend user', 'working'));

@@ -353,4 +353,189 @@ const checkParallel = async () => {
     console.log('worker', r);
 };
 
-checkParallel();
+// checkParallel();
+
+/*
+
+await new Promise((res, rej) => {
+    res(1);
+})
+.then(() => 2)
+.then(() => {
+    return Promise.reject(3);
+})
+.catch(e => {
+    console.log('e', e)
+})
+.then(() => 4)
+.then(r => {
+    console.log('r', r);
+});
+
+await new Promise((res, rej) => {
+    res(1);
+})
+.then(() => 2)
+.then(() => {
+    return Promise.reject(3);
+})
+// .catch(e => {
+//     console.log('e', e)
+// })
+.then(() => 4)
+.then(r => {
+    console.log('r', r);
+});
+
+
+let a = 1;
+let b = {prop: 2};
+let c = {prop: 3};
+
+const fn1 = (x, y, z) => {
+    x = 4;
+    y = {prop: 5};
+    z.prop = 6;
+};
+
+fn1(a, b, c);
+
+console.log(a, b, c);
+
+const checkAsync = () => {
+    console.log(1);
+
+    setTimeout(() => {console.log(2)}, 1);
+    setTimeout(() => {console.log(3)}, 0);
+
+    new Promise((res, rej) => {
+        res(4);
+    }).then((r) => {
+        console.log(r);
+    });
+
+    console.log(5);
+
+    new Promise((res, rej) => {
+        res(6);
+    }).then((r) => {
+        console.log(r);
+    });
+
+    console.log(7);
+};
+
+checkAsync();
+
+*/
+
+// Армия функций
+function makeArmy() {
+    let shooters = [];
+
+    let i = 0;
+    while (i < 10) {
+        // const j = i; // fix last value of i in every function
+        let shooter = function() { // функция shooter
+            return j; // должна выводить порядковый номер
+        };
+        shooters.push(shooter);
+        i++;
+    }
+
+    return shooters;
+}
+
+/*
+let army = makeArmy();
+console.log(
+    'army[3]', army[3](),
+    'army[7]', army[7]()
+);
+*/
+
+const checkVariableReplace = ({text, ...other}) => {
+    console.log(
+        'checkLog',
+        {
+            value: text,
+            ...other
+        }
+    );
+};
+/*
+checkVariableReplace({
+    text: 123,
+    value: true,
+    prop1: 'prop1'
+});
+*/
+
+/*
+
+let o1 = {
+    key1: 'key1',
+    key2: 'key2'
+};
+
+let o2 = {
+    __proto__: o1,
+    key1: 1,
+    key2: 2,
+    key3: 'key3',
+    key4: 'key4',
+};
+
+console.log('o1', o1, 'o2', o2);
+
+
+for (let k in o2) {
+    console.log(
+        'k', k,
+        'v', o2[k],
+        o2.hasOwnProperty(k)
+    );
+}
+
+console.log('o2.key1', o2.key1);
+delete o2.key1;
+console.log('o2.key1', o2.key1);
+delete o2.key1;
+console.log('o2.key1', o2.key1);
+delete o2.key1;
+console.log('o2.key1', o2.key1);
+
+
+let animal = {
+    jumps: 1
+};
+let rabbit = {
+    __proto__: animal,
+    jumps: 2
+};
+
+console.log( rabbit.jumps ); // ? (1)
+
+delete rabbit.jumps;
+
+console.log( rabbit.jumps ); // ? (2)
+
+delete rabbit.jumps;
+
+console.log( rabbit.jumps, animal.jumps ); // ? (2)
+
+
+delete animal.jumps;
+
+console.log( rabbit.jumps ); // ? (3)
+
+*/
+
+/*
+
+
+stop propagate
+
+
+
+*/

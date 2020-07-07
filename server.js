@@ -17,9 +17,11 @@ let routeSocket = require(__dirname + '/routes/socket.js');
 let routeTest = require(__dirname + '/routes/test.js');
 
 let helper = require(__dirname + '/api/helper.js');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
 
-let cfg = null,
-    server = null;
+let cfg;
+let server;
 
 module.exports.launch =  () => {
     return helper.getConfig()
@@ -41,6 +43,10 @@ module.exports.launch =  () => {
 
             app.use(express.static(path.join(__dirname, '/public')));
             app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+
+            // swagger
+            app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
             app.use('/', rIndex);
             app.use('/test', routeTest);
 

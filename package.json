@@ -58,6 +58,7 @@
     "socket.io": "^2.3.0",
     "socket.io-client": "^2.3.0",
     "style-loader": "^0.18.2",
+    "swagger-ui-express": "^4.1.4",
     "url-loader": "^0.5.9",
     "webpack": "^3.7.1",
     "webpack-dev-middleware": "^1.12.0",

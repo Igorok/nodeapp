@@ -1,0 +1,62 @@
+{
+    "swagger": "2.0",
+
+    "info": {
+        "title": "Sample Pet Store App",
+        "description": "This is a sample server for a pet store.",
+        "termsOfService": "http://example.com/terms/",
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.example.com/support",
+            "email": "support@example.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.1"
+    },
+
+    "paths": {
+        "/fetch": {
+            "post": {
+                "description": "JSONrpc",
+                "parameters": [
+                    {
+                        "name": "fetch",
+                        "in": "body",
+                        "description": "Contain name of class and method blog.getBlogList",
+                        "example": {
+                            "fetch": "blog.getBlogList"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Answer from api",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "created": "2020-07-05 19:49",
+                                    "description": "description",
+                                    "name": "name",
+                                    "updated": "2020-07-05T16:48:36.779Z",
+                                    "user": "user",
+                                    "_id": "5f0203adfb11fd696a4b9ebe"
+                                }
+                            }
+                        }
+                    },
+                    "example": {
+                        "summary": "Api for blogs",
+                        "description": "List of blogs",
+                        "externalValue": "{\"created\":\"2020-07-05 19:49\",\"description\":\"description\",\"name\":\"name\",\"updated\":\"2020-07-05T16:48:36.779Z\",\"user\":\"user\",\"_id\":\"5f0203adfb11fd696a4b9ebe\"}"
+                    }
+                }
+            }
+        }
+    }
+
+
+
+}

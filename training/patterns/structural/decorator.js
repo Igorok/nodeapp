@@ -32,7 +32,7 @@ class NotifierEmail extends Notifier {
     }
     notify(text) {
         console.log('email', this.user.email, text);
-        this.notifier.notify(text);
+        // this.notifier.notify(text);
     }
 }
 
@@ -107,7 +107,7 @@ const user = new User({
 });
 const settings = {
     email: true,
-    sms: false,
+    sms: true,
     facebook: false,
     slack: true,
 };
